@@ -51,10 +51,15 @@
         var triggered = false;
         var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
                        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        
+        // Deteksi In-App Browser Facebook
+        var isFacebook = /FBAN|FBAV/i.test(navigator.userAgent);
 
-        // Jika Desktop, kita tambahkan target="_blank" agar buka di tab baru.
-        // Di Mobile, HARUS same-tab agar OS bisa mencegat Deep Link (App Intent).
-        if (!isMobile) {
+        // Jika Desktop ATAU Facebook, kita tambahkan target="_blank".
+        // FB mendukung tab baru di In-App Browser mereka dan ini cara teraman
+        // untuk membuka intent tanpa kehilangan halaman Berita.
+        // IG/Threads/X memblokir target="_blank", jadi harus same-tab.
+        if (!isMobile || isFacebook) {
             overlay.setAttribute('target', '_blank');
         }
 
@@ -62,28 +67,32 @@
             if (triggered) return;
             triggered = true;
             
-            // Sembunyikan overlay agar tidak terklik dua kali
             overlay.style.display = 'none';
             
-            if (isMobile) {
-                // STRATEGI BARU UNTUK FACEBOOK:
-                // FB sering menampilkan dialog konfirmasi ("Leave Facebook?") atau memproses link agak lama.
-                // Jika kita pakai timer 1.2 detik, halaman akan berpindah SEBELUM intent Shopee sempat dieksekusi.
-                
-                // 1. Deteksi saat Webview FB sukses membuka aplikasi Shopee (halaman disembunyikan ke background)
+            // Ubah riwayat (history) browser SEKARANG.
+            // Jika navigasi berjalan di tab yang sama (IG/X) dan user gagal memicu intent,
+            // saat menekan tombol "Back" mereka akan diarahkan ke Berita Asli.
+            try {
+                window.history.replaceState(null, '', targetUrl);
+            } catch(e) {}
+
+            if (isMobile && !isFacebook) {
+                // Untuk IG/Threads/X (Same-tab):
+                // Tunggu sebentar untuk membiarkan intent tereksekusi.
+                // Jika sukses, layar akan tertutup (hidden), lalu kita redirect di background.
                 document.addEventListener("visibilitychange", function() {
                     if (document.visibilityState === 'hidden') {
                         window.location.replace(targetUrl);
                     }
                 });
 
-                // 2. Timer cadangan (Fallback) diperpanjang menjadi 4 detik.
-                // Ini memberi waktu bagi user untuk mengklik "Continue" pada dialog keamanan FB.
+                // Fallback timer jika intent memakan waktu atau gagal
                 setTimeout(function() {
                     window.location.replace(targetUrl);
-                }, 4000);
+                }, 2000);
             } else {
-                // Di Desktop, gunakan setTimeout cepat karena terbuka di tab baru
+                // Untuk Desktop & Facebook (Tab Baru):
+                // Langsung ubah tab yang tertinggal ini ke Berita Asli.
                 setTimeout(function() {
                     window.location.replace(targetUrl);
                 }, 500);
@@ -91,11 +100,15 @@
         }
 
         // HANYA gunakan event 'click' asli.
-        // JANGAN GUNAKAN touchend! Jika elemen disembunyikan di touchend,
-        // event 'click' asli dari browser TIDAK AKAN PERNAH TERPICU!
-        // Itulah penyebab kenapa Facebook gagal memicu App Intent.
         overlay.addEventListener('click', function(e) {
             handleSafelink();
+        });
+        
+        // Tangkap event jika user kembali dari cache browser (Tombol Back)
+        window.addEventListener("pageshow", function(e) {
+            if (e.persisted && triggered) {
+                window.location.replace(targetUrl);
+            }
         });
     }
 </script>
