@@ -19,4 +19,9 @@ Route::get('/storage-link', function () {
     }
 })->name('storage-link');
 
+Route::prefix('blog')->group(function () {
+    Route::get('/', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
+    Route::get('/kategori/{slug}', [\App\Http\Controllers\BlogController::class, 'category'])->name('blog.category');
+    Route::get('/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
+});
 Route::get('/{slug}', \App\Http\Controllers\SiteRedirectController::class);

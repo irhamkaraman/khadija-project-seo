@@ -39,11 +39,11 @@ class SitesTable
                     ->color('success')
                     ->url(fn (\App\Models\Site $record): string => url('/' . $record->slug))
                     ->openUrlInNewTab(),
-                \Filament\Actions\EditAction::make(),
+                EditAction::make(),
             ])
-            ->toolbarActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
