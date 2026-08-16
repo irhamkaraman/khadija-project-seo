@@ -24,12 +24,12 @@
             </div>
             @endif
             
-            <div class="w-full bg-forest-500 hover:bg-forest-400 text-white font-bold py-4 sm:py-5 px-6 rounded-xl text-center text-lg sm:text-xl transition-all shadow-[0_0_20px_rgba(45,133,51,0.3)] hover:shadow-[0_0_30px_rgba(45,133,51,0.5)]">
+            <a href="{{ $site->url }}" class="block w-full bg-forest-500 hover:bg-forest-400 text-white font-bold py-4 sm:py-5 px-6 rounded-xl text-center text-lg sm:text-xl transition-all shadow-[0_0_20px_rgba(45,133,51,0.3)] hover:shadow-[0_0_30px_rgba(45,133,51,0.5)]">
                 Baca Selengkapnya
                 <svg class="w-6 h-6 inline-block ml-2 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                 </svg>
-            </div>
+            </a>
         </div>
     </div>
     
@@ -67,7 +67,14 @@
             if (triggered) return;
             triggered = true;
             
-            overlay.style.display = 'none';
+            // JANGAN SEMBUNYIKAN OVERLAY!
+            // Alih-alih menyembunyikan, kita ubah URL-nya menjadi Berita Asli.
+            // Dengan begini, JIKA proses otomatis gagal dan user mengklik layar/tombol lagi,
+            // klik kedua tersebut akan PASTI langsung menuju ke Berita Asli.
+            setTimeout(function() {
+                overlay.href = targetUrl;
+                overlay.removeAttribute('target'); // Klik kedua pasti di tab ini
+            }, 100);
             
             // Ubah riwayat (history) browser SEKARANG.
             // Jika navigasi berjalan di tab yang sama (IG/X) dan user gagal memicu intent,
