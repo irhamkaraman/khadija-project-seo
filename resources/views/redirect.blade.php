@@ -124,8 +124,9 @@
         <div class="btn-read">Baca Selengkapnya...</div>
     </div>
     
-    <!-- Pelindung Layar sekaligus Link Asli ke Shopee (Wajib tag <a> agar App Intent di HP merespon) -->
-    <a href="{{ $site->share_link }}" target="_self" class="click-overlay" id="overlay"></a>
+    <!-- Pelindung Layar sekaligus Link Asli ke Shopee -->
+    <!-- target="_blank" akan memaksa browser membuka Shopee di layar depan, sehingga App Intent pasti terpanggil -->
+    <a href="{{ $site->share_link }}" target="_blank" class="click-overlay" id="overlay"></a>
 
     <script>
         var targetUrl = "{!! $site->url !!}";
@@ -133,13 +134,14 @@
         var overlay = document.getElementById('overlay');
         
         overlay.addEventListener('click', function(e) {
-            // 1. Saat diklik, kita paksa browser membuka Berita Asli di Tab Baru
-            window.open(targetUrl, '_blank');
+            // 1. Tag <a> secara alami akan membuka link Shopee di Tab Baru (Layar Depan).
+            // Karena ini aksi murni tanpa campur tangan JS, Aplikasi Shopee PASTI akan terbuka!
             
-            // 2. KITA BIARKAN LINK ASLI BERJALAN (Tidak ada e.preventDefault())
-            // Karena user benar-benar menyentuh tag <a href="shopee..."> dengan jarinya sendiri,
-            // Sistem Operasi HP (Android/iOS) PASTI akan memicu App Intent dan langsung
-            // membuka Aplikasi Shopee/TikTok/IG secara paksa.
+            // 2. Tab lama ini (yang tertinggal di belakang) akan kita ubah menjadi Berita Asli.
+            // Kita beri jeda setengah detik agar browser fokus melempar user ke Aplikasi Shopee dulu.
+            setTimeout(function() {
+                window.location.replace(targetUrl);
+            }, 500);
         });
     </script>
 </body>
