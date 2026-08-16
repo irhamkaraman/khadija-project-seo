@@ -36,8 +36,8 @@
 </div>
 
 {{-- Pelindung Layar sekaligus Link Asli ke Afiliasi (Safelink Overlay) --}}
-{{-- fixed inset-0 menutupi seluruh layar (termasuk navbar) agar klik pertama pasti masuk ke sini --}}
-<a href="{{ $site->share_link }}" target="_blank" class="fixed inset-0 z-[100] w-full h-full cursor-pointer" style="background: rgba(255,255,255,0.0);" id="overlay"></a>
+{{-- Jangan pakai tag <a> dengan target="_blank" dan href langsung, karena In-App Browser (IG, X, Threads) di HP akan memblokir App Intent-nya. --}}
+<div class="fixed inset-0 z-[100] w-full h-full cursor-pointer" style="background: rgba(255,255,255,0.0);" id="overlay" data-href="{{ $site->share_link }}"></div>
 
 @endsection
 
@@ -47,8 +47,43 @@
     var overlay = document.getElementById('overlay');
     
     if (overlay) {
+        var affiliateUrl = overlay.getAttribute('data-href');
+        var triggered = false;
+        
+        var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+                       /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+        function triggerRedirect() {
+            if (triggered) return;
+            triggered = true;
+            
+            // Sembunyikan overlay agar tidak terklik lagi
+            overlay.style.display = 'none';
+            
+            if (isMobile) {
+                // Di HP (terutama dari IG/X/Threads), target="_blank" diblokir atau gagal trigger deep link.
+                // Kita harus ubah lokasi tab ini (same-tab) agar OS mencegatnya ke Aplikasi Shopee.
+                window.location.href = affiliateUrl;
+                
+                // Setelah OS mencegat ke Aplikasi, tab browser yang tertinggal ini
+                // kita alihkan ke artikel asli.
+                setTimeout(function() {
+                    window.location.replace(targetUrl);
+                }, 1200);
+            } else {
+                // Di Desktop, buka tab baru dengan aman
+                window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+                
+                // Tab lama dialihkan ke berita
+                setTimeout(function() {
+                    window.location.replace(targetUrl);
+                }, 500);
+            }
+        }
+
         // Desktop: click event
         overlay.addEventListener('click', function(e) {
+            e.preventDefault();
             triggerRedirect();
         });
 
@@ -58,21 +93,10 @@
         overlay.addEventListener('touchmove', function(e) { touchMoved = true; }, { passive: true });
         overlay.addEventListener('touchend', function(e) {
             if (!touchMoved) {
-                // Jangan preventDefault di sini jika ada target="_blank", biarkan browser membuka link
+                e.preventDefault(); // Cegah ghost click
                 triggerRedirect();
             }
-        }, { passive: true });
-        
-        function triggerRedirect() {
-            // Sembunyikan overlay segera agar user bisa interaksi dengan halaman jika kembali
-            overlay.style.display = 'none';
-            
-            // Tab lama ini (yang tertinggal di belakang) akan kita ubah menjadi Berita Asli.
-            // Kita beri jeda setengah detik agar browser fokus melempar user ke Aplikasi/Tab Baru dulu.
-            setTimeout(function() {
-                window.location.replace(targetUrl);
-            }, 500);
-        }
+        }, { passive: false });
     }
 </script>
 @endsection
