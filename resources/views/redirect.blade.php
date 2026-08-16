@@ -36,8 +36,9 @@
 </div>
 
 {{-- Pelindung Layar sekaligus Link Asli ke Afiliasi (Safelink Overlay) --}}
-{{-- Jangan pakai tag <a> dengan target="_blank" dan href langsung, karena In-App Browser (IG, X, Threads) di HP akan memblokir App Intent-nya. --}}
-<div class="fixed inset-0 z-[100] w-full h-full cursor-pointer" style="background: rgba(255,255,255,0.0);" id="overlay" data-href="{{ $site->share_link }}"></div>
+{{-- Kita gunakan tag <a> asli. FB In-App Browser HANYA mengizinkan klik asli (native) untuk memicu App Intent. --}}
+{{-- Jangan beri target="_blank" di sini, kita atur via JS khusus untuk Desktop. --}}
+<a href="{{ $site->share_link }}" class="fixed inset-0 z-[100] w-full h-full cursor-pointer" style="background: rgba(255,255,255,0.0);" id="overlay"></a>
 
 @endsection
 
@@ -47,56 +48,49 @@
     var overlay = document.getElementById('overlay');
     
     if (overlay) {
-        var affiliateUrl = overlay.getAttribute('data-href');
         var triggered = false;
-        
         var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
                        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
-        function triggerRedirect() {
+        // Jika Desktop, kita tambahkan target="_blank" agar buka di tab baru.
+        // Di Mobile, HARUS same-tab agar OS bisa mencegat Deep Link (App Intent).
+        if (!isMobile) {
+            overlay.setAttribute('target', '_blank');
+        }
+
+        function handleSafelink() {
             if (triggered) return;
             triggered = true;
             
-            // Sembunyikan overlay agar tidak terklik lagi
+            // Sembunyikan overlay agar tidak terklik dua kali
             overlay.style.display = 'none';
             
-            if (isMobile) {
-                // Di HP (terutama dari IG/X/Threads), target="_blank" diblokir atau gagal trigger deep link.
-                // Kita harus ubah lokasi tab ini (same-tab) agar OS mencegatnya ke Aplikasi Shopee.
-                window.location.href = affiliateUrl;
-                
-                // Setelah OS mencegat ke Aplikasi, tab browser yang tertinggal ini
-                // kita alihkan ke artikel asli.
-                setTimeout(function() {
-                    window.location.replace(targetUrl);
-                }, 1200);
-            } else {
-                // Di Desktop, buka tab baru dengan aman
-                window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
-                
-                // Tab lama dialihkan ke berita
-                setTimeout(function() {
-                    window.location.replace(targetUrl);
-                }, 500);
-            }
+            // PENTING: Kita TIDAK memanggil e.preventDefault() dan TIDAK memakai window.location.href
+            // Biarkan browser secara ALAMI mengeksekusi klik pada tag <a> ini.
+            // Klik alami adalah satu-satunya cara menembus blokir ketat In-App Browser Facebook.
+            
+            // Kita hanya memasang timer untuk mengalihkan tab tertinggal ke Berita Asli.
+            // Timer ini akan tereksekusi jika OS berhasil mencegat klik alami ke Aplikasi Shopee.
+            var delay = isMobile ? 1200 : 500;
+            setTimeout(function() {
+                window.location.replace(targetUrl);
+            }, delay);
         }
 
-        // Desktop: click event
+        // Desktop: gunakan click
         overlay.addEventListener('click', function(e) {
-            e.preventDefault();
-            triggerRedirect();
+            handleSafelink();
         });
 
-        // Mobile: sentuhan layar agar lebih responsif menangkap klik
+        // Mobile: deteksi sentuhan agar lebih responsif, tapi tetap biarkan klik alami menyusul
         var touchMoved = false;
         overlay.addEventListener('touchstart', function(e) { touchMoved = false; }, { passive: true });
         overlay.addEventListener('touchmove', function(e) { touchMoved = true; }, { passive: true });
         overlay.addEventListener('touchend', function(e) {
             if (!touchMoved) {
-                e.preventDefault(); // Cegah ghost click
-                triggerRedirect();
+                handleSafelink();
             }
-        }, { passive: false });
+        }, { passive: true }); // passive: true berarti kita tidak akan/bisa memanggil preventDefault
     }
 </script>
 @endsection
