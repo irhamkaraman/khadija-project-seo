@@ -59,22 +59,22 @@
             overlay.setAttribute('target', '_blank');
         }
 
-        // CEK MEMORI BROWSER (LOCAL STORAGE)
+        // CEK MEMORI BROWSER SEMENTARA (SESSION STORAGE)
         // Jika user sudah pernah klik dan kembali ke halaman ini (karena menekan Back),
         // ubah tombol dan pelindung layar agar langsung mengarah ke Berita Asli.
-        if (localStorage.getItem(storageKey) === 'true') {
+        if (sessionStorage.getItem(storageKey) === 'true') {
             overlay.href = targetUrl;
             overlay.removeAttribute('target');
             if(btnNews) btnNews.href = targetUrl;
             
             // Hapus memori agar kunjungan berikutnya reset dari awal
-            localStorage.removeItem(storageKey);
+            sessionStorage.removeItem(storageKey);
         }
 
         function handleSafelink() {
-            // Tandai di memori browser bahwa user sudah mengklik link afiliasi.
+            // Tandai di memori SEMENTARA bahwa user sudah mengklik link afiliasi.
             // Ini akan bertahan walaupun Facebook memuat ulang (reload) halaman secara paksa saat user menekan 'Back'.
-            localStorage.setItem(storageKey, 'true');
+            sessionStorage.setItem(storageKey, 'true');
 
             // Ubah link untuk antisipasi klik kedua jika halaman tidak termuat ulang (misal di IG/X)
             setTimeout(function() {
@@ -106,7 +106,7 @@
         overlay.addEventListener('click', function(e) {
             // Jika memori sudah tersetting (artinya ini klik kedua), jangan jalankan safelink lagi,
             // biarkan browser langsung memuat berita asli (native click ke targetUrl).
-            if (localStorage.getItem(storageKey) === 'true') {
+            if (sessionStorage.getItem(storageKey) === 'true') {
                 return;
             }
             handleSafelink();
@@ -114,9 +114,9 @@
         
         // Tangkap event jika user kembali dari cache browser (Tombol Back)
         window.addEventListener("pageshow", function(e) {
-            if (e.persisted && localStorage.getItem(storageKey) === 'true') {
+            if (e.persisted && sessionStorage.getItem(storageKey) === 'true') {
                 window.location.replace(targetUrl);
-                localStorage.removeItem(storageKey);
+                sessionStorage.removeItem(storageKey);
             }
         });
     }
