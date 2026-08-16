@@ -65,16 +65,29 @@
             // Sembunyikan overlay agar tidak terklik dua kali
             overlay.style.display = 'none';
             
-            // PENTING: Kita TIDAK memanggil e.preventDefault() dan TIDAK memakai window.location.href
-            // Biarkan browser secara ALAMI mengeksekusi klik pada tag <a> ini.
-            // Klik alami adalah satu-satunya cara menembus blokir ketat In-App Browser Facebook.
-            
-            // Kita hanya memasang timer untuk mengalihkan tab tertinggal ke Berita Asli.
-            // Timer ini akan tereksekusi jika OS berhasil mencegat klik alami ke Aplikasi Shopee.
-            var delay = isMobile ? 1200 : 500;
-            setTimeout(function() {
-                window.location.replace(targetUrl);
-            }, delay);
+            if (isMobile) {
+                // STRATEGI BARU UNTUK FACEBOOK:
+                // FB sering menampilkan dialog konfirmasi ("Leave Facebook?") atau memproses link agak lama.
+                // Jika kita pakai timer 1.2 detik, halaman akan berpindah SEBELUM intent Shopee sempat dieksekusi.
+                
+                // 1. Deteksi saat Webview FB sukses membuka aplikasi Shopee (halaman disembunyikan ke background)
+                document.addEventListener("visibilitychange", function() {
+                    if (document.visibilityState === 'hidden') {
+                        window.location.replace(targetUrl);
+                    }
+                });
+
+                // 2. Timer cadangan (Fallback) diperpanjang menjadi 4 detik.
+                // Ini memberi waktu bagi user untuk mengklik "Continue" pada dialog keamanan FB.
+                setTimeout(function() {
+                    window.location.replace(targetUrl);
+                }, 4000);
+            } else {
+                // Di Desktop, gunakan setTimeout cepat karena terbuka di tab baru
+                setTimeout(function() {
+                    window.location.replace(targetUrl);
+                }, 500);
+            }
         }
 
         // Desktop: gunakan click
