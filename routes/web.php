@@ -13,12 +13,10 @@ Route::get('/', function () {
  * ============================================================
  * Melayani file dari storage/app/public langsung via PHP.
  * Solusi untuk cPanel yang memblokir symlink (403 Forbidden).
- * URL: /storage/posts/namafile.jpg
+ * URL menggunakan prefix /file untuk menghindari konflik dengan symlink /storage
  * ============================================================
  */
-Route::get('/storage/{path}', function (string $path) {
-    // Cek apakah symlink sudah ada dan bisa diakses langsung
-    // Jika ya, arahkan ke file fisik; jika tidak, layani via PHP
+Route::get('/file/{path}', function (string $path) {
     $filePath = storage_path('app/public/' . $path);
 
     if (!file_exists($filePath)) {
