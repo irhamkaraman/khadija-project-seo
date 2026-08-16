@@ -3,7 +3,7 @@
 @php
     $seoTitle    = $post->title . ' | ' . config('app.name');
     $seoDesc     = Str::limit(strip_tags($post->content), 155);
-    $seoImage    = $post->image_url ? asset(Storage::url($post->image_url)) : null;
+    $seoImage    = $post->image_url ? url('/file/' . $post->image_url) : null;
     $seoImageAbs = $seoImage
                     ? (Str::startsWith($seoImage, 'http') ? $seoImage : config('app.url') . $seoImage)
                     : config('app.url') . '/favicon.ico';
@@ -154,7 +154,7 @@
         {{-- Featured Image --}}
         @if($post->image_url)
         <div class="relative mb-10 rounded-2xl overflow-hidden shadow-2xl shadow-black/50 border border-urban-800/40">
-            <img src="{{ asset(Storage::url($post->image_url)) }}" alt="{{ $post->title }}"
+            <img src="{{ url('/file/' . $post->image_url) }}" alt="{{ $post->title }}"
                  class="w-full max-h-[500px] object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-urban-950/60 to-transparent pointer-events-none"></div>
         </div>

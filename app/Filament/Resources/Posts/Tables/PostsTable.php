@@ -22,7 +22,7 @@ class PostsTable
                     ->label('Gambar')
                     ->square()
                     ->disk('public')
-                    ->url(fn (Post $record) => $record->image_url ? asset(Storage::url($record->image_url)) : null),
+                    ->url(fn (Post $record) => $record->image_url ? url('/file/' . $record->image_url) : null),
                 TextColumn::make('title')
                     ->label('Judul')
                     ->searchable()

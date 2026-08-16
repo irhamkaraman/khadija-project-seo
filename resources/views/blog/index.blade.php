@@ -61,7 +61,7 @@
                class="post-card group relative block rounded-2xl overflow-hidden mb-8 border border-urban-800/40 hover:border-forest-700/50 shadow-xl shadow-black/40"
                style="min-height: 420px;">
                 @if($featured->image_url)
-                    <img src="{{ asset(Storage::url($featured->image_url)) }}" alt="{{ $featured->title }}"
+                    <img src="{{ url('/file/' . $featured->image_url) }}" alt="{{ $featured->title }}"
                          class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 @else
                     <div class="absolute inset-0 bg-gradient-to-br from-urban-800 to-urban-900"></div>
@@ -104,7 +104,7 @@
 
                     <div class="relative h-48 overflow-hidden flex-shrink-0">
                         @if($post->image_url)
-                            <img src="{{ asset(Storage::url($post->image_url)) }}" alt="{{ $post->title }}"
+                            <img src="{{ url('/file/' . $post->image_url) }}" alt="{{ $post->title }}"
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         @else
                             <div class="w-full h-full bg-gradient-to-br from-urban-800 to-urban-900 flex items-center justify-center">

@@ -76,7 +76,7 @@
 
                 <div class="relative h-48 overflow-hidden flex-shrink-0">
                     @if($post->image_url)
-                        <img src="{{ asset(Storage::url($post->image_url)) }}" alt="{{ $post->title }}"
+                        <img src="{{ url('/file/' . $post->image_url) }}" alt="{{ $post->title }}"
                              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     @else
                         <div class="w-full h-full bg-gradient-to-br from-urban-800 to-urban-900 flex items-center justify-center">
