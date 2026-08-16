@@ -38,8 +38,9 @@ class PostForm
                 \Filament\Forms\Components\Repeater::make('share_links')
                     ->label('Kumpulan Link Afiliasi (Shopee/TikTok)')
                     ->schema([
-                        TextInput::make('url')
-                            ->label('URL')
+                        \Filament\Forms\Components\Textarea::make('url')
+                            ->label('URL Afiliasi')
+                            ->rows(3)
                             ->url()
                             ->required(),
                     ])

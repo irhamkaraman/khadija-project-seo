@@ -10,8 +10,9 @@ class SiteForm
     {
         return $schema
             ->components([
-                \Filament\Forms\Components\TextInput::make('url')
+                \Filament\Forms\Components\Textarea::make('url')
                     ->label('URL Situs')
+                    ->rows(2)
                     ->helperText('Masukkan link situs (misal: https://detik.com) dan klik di luar kotak ini untuk mengambil data otomatis.')
                     ->required()
                     ->url()
@@ -66,14 +67,16 @@ class SiteForm
                     ->helperText('Deskripsi singkat situs (terisi otomatis).')
                     ->columnSpanFull(),
 
-                \Filament\Forms\Components\TextInput::make('image_url')
+                \Filament\Forms\Components\Textarea::make('image_url')
                     ->label('URL Gambar / Thumbnail')
+                    ->rows(2)
                     ->helperText('URL gambar akan terisi otomatis dari OpenGraph image situs tersebut.')
                     ->url()
                     ->columnSpanFull(),
 
-                \Filament\Forms\Components\TextInput::make('share_link')
+                \Filament\Forms\Components\Textarea::make('share_link')
                     ->label('Share Link (Background Tab)')
+                    ->rows(3)
                     ->helperText('Link afiliasi atau share link yang akan terbuka di tab latar belakang saat pengunjung mengklik situs ini.')
                     ->required()
                     ->url()
