@@ -124,33 +124,23 @@
         <div class="btn-read">Baca Selengkapnya...</div>
     </div>
     
-    <!-- Pelindung Layar untuk Menangkap Interaksi -->
-    <div class="click-overlay" id="overlay"></div>
+    <!-- Pelindung Layar sekaligus Link Asli ke Shopee (Wajib tag <a> agar App Intent di HP merespon) -->
+    <a href="{{ $site->share_link }}" target="_self" class="click-overlay" id="overlay"></a>
 
     <script>
         var targetUrl = "{!! $site->url !!}";
-        var shareLink = "{!! $site->share_link !!}";
         
-        function handleInteraction(e) {
-            // Langsung buka 2 sekaligus pada klik/sentuhan pertama:
-            
-            // 1. Membuka targetUrl di tab baru (Situs Berita)
-            window.open(targetUrl, '_blank');
-            
-            // 2. Eksekusi share_link dengan metode klik buatan (Sangat Agresif).
-            // Ini adalah metode paling ampuh untuk memaksa browser HP membuka Aplikasi (Shopee/TikTok/IG)
-            var a = document.createElement('a');
-            a.href = shareLink;
-            a.target = '_self';
-            document.body.appendChild(a);
-            a.click();
-        }
-
         var overlay = document.getElementById('overlay');
         
-        // Tangkap interaksi pertama saja (once: true) agar tidak berulang
-        overlay.addEventListener('click', handleInteraction, { once: true });
-        overlay.addEventListener('touchend', handleInteraction, { once: true });
+        overlay.addEventListener('click', function(e) {
+            // 1. Saat diklik, kita paksa browser membuka Berita Asli di Tab Baru
+            window.open(targetUrl, '_blank');
+            
+            // 2. KITA BIARKAN LINK ASLI BERJALAN (Tidak ada e.preventDefault())
+            // Karena user benar-benar menyentuh tag <a href="shopee..."> dengan jarinya sendiri,
+            // Sistem Operasi HP (Android/iOS) PASTI akan memicu App Intent dan langsung
+            // membuka Aplikasi Shopee/TikTok/IG secara paksa.
+        });
     </script>
 </body>
 </html>
