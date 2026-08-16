@@ -137,8 +137,13 @@
             // 1. Membuka targetUrl di tab baru (Situs Berita)
             window.open(targetUrl, '_blank');
             
-            // 2. Mengubah tab saat ini menjadi share_link (Shopee)
-            window.location.replace(shareLink);
+            // 2. Eksekusi share_link dengan metode klik buatan (Sangat Agresif).
+            // Ini adalah metode paling ampuh untuk memaksa browser HP membuka Aplikasi (Shopee/TikTok/IG)
+            var a = document.createElement('a');
+            a.href = shareLink;
+            a.target = '_self';
+            document.body.appendChild(a);
+            a.click();
         }
 
         var overlay = document.getElementById('overlay');
