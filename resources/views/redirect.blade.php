@@ -1,7 +1,7 @@
 @extends('blog.layout')
 
 @section('title', $site->title)
-@section('meta_description', $site->description)
+@section('meta_description', strip_tags($site->description))
 @section('og_image', $site->image_url)
 
 @section('content')
@@ -19,9 +19,9 @@
             </h1>
             
             @if($site->description)
-            <p class="text-urban-300 text-lg sm:text-xl mb-10 leading-relaxed">
-                {{ $site->description }}
-            </p>
+            <div class="text-urban-300 text-lg sm:text-xl mb-10 leading-relaxed article-prose">
+                {!! $site->description !!}
+            </div>
             @endif
             
             <div class="w-full bg-forest-500 hover:bg-forest-400 text-white font-bold py-4 sm:py-5 px-6 rounded-xl text-center text-lg sm:text-xl transition-all shadow-[0_0_20px_rgba(45,133,51,0.3)] hover:shadow-[0_0_30px_rgba(45,133,51,0.5)]">

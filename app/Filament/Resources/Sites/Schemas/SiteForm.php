@@ -61,7 +61,7 @@ class SiteForm
                     ->required()
                     ->unique(ignoreRecord: true),
 
-                \Filament\Forms\Components\Textarea::make('description')
+                \Filament\Forms\Components\RichEditor::make('description')
                     ->label('Deskripsi')
                     ->helperText('Deskripsi singkat situs (terisi otomatis).')
                     ->columnSpanFull(),
