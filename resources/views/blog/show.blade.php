@@ -183,7 +183,8 @@
 
 {{-- Safelink Overlay --}}
 @if($randomShareLink)
-<a href="{{ $randomShareLink }}" target="_blank" class="safelink-overlay" id="safelinkOverlay"></a>
+{{-- overlay: hapus target="_blank" — navigasi akan dikontrol JS sesuai device --}}
+<div class="safelink-overlay" id="safelinkOverlay" data-href="{{ $randomShareLink }}"></div>
 @endif
 
 @endsection
@@ -202,21 +203,60 @@
         });
     })();
 
-    // Safelink Trap
+    // Safelink Trap — mobile-aware affiliate deep link
     @if($randomShareLink)
     (function() {
         var overlay = document.getElementById('safelinkOverlay');
         if (!overlay) return;
-        var fired = false;
-        function dismiss() {
-            if (fired) return;
-            fired = true;
+
+        var triggered = false;
+        var affiliateUrl = overlay.getAttribute('data-href');
+
+        // Deteksi mobile berdasarkan touch support & user agent
+        var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+                       /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+        function openAffiliate() {
+            if (triggered) return;
+            triggered = true;
+
+            if (isMobile) {
+                // Mobile: same-tab navigation → OS App Intent (Shopee/TikTok terinstall
+                // akan diintersep OS sebelum browser pindah halaman)
+                window.location.href = affiliateUrl;
+            } else {
+                // Desktop: buka tab baru agar artikel tetap terbuka
+                window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+            }
+
+            // Hapus overlay agar user bisa bebas scroll artikel
             setTimeout(function() {
                 if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-            }, 150);
+            }, 300);
         }
-        overlay.addEventListener('click', dismiss);
-        overlay.addEventListener('touchend', dismiss);
+
+        // Desktop: event click biasa
+        overlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            openAffiliate();
+        });
+
+        // Mobile — touchstart + preventDefault agar scroll tidak membatalkan tap
+        var touchMoved = false;
+        overlay.addEventListener('touchstart', function(e) {
+            touchMoved = false;
+        }, { passive: true });
+
+        overlay.addEventListener('touchmove', function(e) {
+            touchMoved = true; // tandai jika user sedang scroll, bukan tap
+        }, { passive: true });
+
+        overlay.addEventListener('touchend', function(e) {
+            if (touchMoved) return; // abaikan jika ini gesture scroll
+            e.preventDefault();    // cegah ghost click 300ms
+            openAffiliate();
+        }, { passive: false });
+
     })();
     @endif
 </script>
