@@ -18,7 +18,9 @@ class SiteResource extends Resource
 {
     protected static ?string $model = Site::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-link';
+
+    protected static ?string $navigationGroup = 'Safelink';
 
     protected static ?string $navigationLabel = 'Manajemen Situs';
 

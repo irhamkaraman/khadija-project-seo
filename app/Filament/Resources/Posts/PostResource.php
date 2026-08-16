@@ -18,7 +18,9 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Blog';
 
     protected static ?string $recordTitleAttribute = 'Post';
 
