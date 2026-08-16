@@ -3,6 +3,9 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    # Izinkan Apache mengikuti symlink (diperlukan untuk storage:link di cPanel)
+    Options +FollowSymLinks +SymLinksIfOwnerMatch
+
     RewriteEngine On
 
     # Handle Authorization Header
