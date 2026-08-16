@@ -7,6 +7,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Illuminate\Support\Facades\Storage;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -20,7 +21,8 @@ class PostsTable
                 ImageColumn::make('image_url')
                     ->label('Gambar')
                     ->square()
-                    ->disk('public'),
+                    ->disk('public')
+                    ->url(fn (Post $record) => $record->image_url ? asset(Storage::url($record->image_url)) : null),
                 TextColumn::make('title')
                     ->label('Judul')
                     ->searchable()
