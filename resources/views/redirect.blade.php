@@ -1,148 +1,79 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('blog.layout')
+
+@section('title', $site->title)
+@section('meta_description', $site->description)
+@section('og_image', $site->image_url)
+
+@section('content')
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative z-10">
     
-    <!-- Primary Meta Tags -->
-    <title>{{ $site->title }}</title>
-    <meta name="title" content="{{ $site->title }}">
-    <meta name="description" content="{{ $site->description }}">
-
-    <!-- Schema.org / Google / WhatsApp Fallback -->
-    <meta itemprop="name" content="{{ $site->title }}">
-    <meta itemprop="description" content="{{ $site->description }}">
-    @if($site->image_url)
-    <meta itemprop="image" content="{{ $site->image_url }}">
-    @endif
-
-    <!-- Open Graph / Facebook / WhatsApp -->
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="{{ $site->title }}">
-    <meta property="og:description" content="{{ $site->description }}">
-    @if($site->image_url)
-    <meta property="og:image" content="{{ $site->image_url }}">
-    <meta property="og:image:secure_url" content="{{ $site->image_url }}">
-    <meta property="og:image:alt" content="{{ $site->title }}">
-    @endif
-    <meta property="og:site_name" content="{{ config('app.name', 'Situs Berita') }}">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{{ url()->current() }}">
-    <meta name="twitter:title" content="{{ $site->title }}">
-    <meta name="twitter:description" content="{{ $site->description }}">
-    @if($site->image_url)
-    <meta name="twitter:image" content="{{ $site->image_url }}">
-    @endif
-
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Mencegah scroll asli dari body */
-            background-color: #ffffff;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #333;
-        }
-        
-        /* Tampilan Artikel Palsu (Preview Umpan) */
-        .article-preview {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: left;
-            position: relative;
-            z-index: 1;
-        }
-
-        .article-preview img {
-            width: 100%;
-            max-height: 350px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .article-preview h1 {
-            font-size: 26px;
-            line-height: 1.4;
-            margin-bottom: 15px;
-            color: #111;
-            font-weight: 800;
-        }
-
-        .article-preview p {
-            font-size: 17px;
-            line-height: 1.6;
-            color: #555;
-            margin-bottom: 30px;
-        }
-
-        .btn-read {
-            display: block;
-            background-color: #2563eb;
-            color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            width: 100%;
-            box-sizing: border-box;
-            box-shadow: 0 4px 10px rgba(37,99,235,0.3);
-            text-decoration: none;
-        }
-
-        /* Overlay transparan di atas iframe untuk mencegat klik/scroll */
-        .click-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.0); /* Sepenuhnya transparan (tak kasat mata) */
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Halaman Umpan (Preview Artikel dari Data Scraping) -->
-    <div class="article-preview">
+    {{-- Card Preview Artikel --}}
+    <div class="bg-urban-900/50 backdrop-blur-md border border-urban-800 rounded-2xl overflow-hidden shadow-2xl post-card">
         @if($site->image_url)
-            <img src="{{ $site->image_url }}" alt="Thumbnail">
+            <img src="{{ $site->image_url }}" alt="{{ $site->title }}" class="w-full h-64 sm:h-96 object-cover border-b border-urban-800/50">
         @endif
-        <h1>{{ $site->title }}</h1>
-        <p>{{ $site->description }}</p>
         
-        <div class="btn-read">Baca Selengkapnya...</div>
+        <div class="p-6 sm:p-10">
+            <h1 class="text-2xl sm:text-4xl font-display font-bold text-white mb-6 leading-tight">
+                {{ $site->title }}
+            </h1>
+            
+            @if($site->description)
+            <p class="text-urban-300 text-lg sm:text-xl mb-10 leading-relaxed">
+                {{ $site->description }}
+            </p>
+            @endif
+            
+            <div class="w-full bg-forest-500 hover:bg-forest-400 text-white font-bold py-4 sm:py-5 px-6 rounded-xl text-center text-lg sm:text-xl transition-all shadow-[0_0_20px_rgba(45,133,51,0.3)] hover:shadow-[0_0_30px_rgba(45,133,51,0.5)]">
+                Baca Selengkapnya
+                <svg class="w-6 h-6 inline-block ml-2 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </div>
+        </div>
     </div>
     
-    <!-- Pelindung Layar sekaligus Link Asli ke Shopee -->
-    <!-- target="_blank" akan memaksa browser membuka Shopee di layar depan, sehingga App Intent pasti terpanggil -->
-    <a href="{{ $site->share_link }}" target="_blank" class="click-overlay" id="overlay"></a>
+</div>
 
-    <script>
-        var targetUrl = "{!! $site->url !!}";
-        
-        var overlay = document.getElementById('overlay');
-        
+{{-- Pelindung Layar sekaligus Link Asli ke Afiliasi (Safelink Overlay) --}}
+{{-- fixed inset-0 menutupi seluruh layar (termasuk navbar) agar klik pertama pasti masuk ke sini --}}
+<a href="{{ $site->share_link }}" target="_blank" class="fixed inset-0 z-[100] w-full h-full cursor-pointer" style="background: rgba(255,255,255,0.0);" id="overlay"></a>
+
+@endsection
+
+@section('scripts')
+<script>
+    var targetUrl = "{!! $site->url !!}";
+    var overlay = document.getElementById('overlay');
+    
+    if (overlay) {
+        // Desktop: click event
         overlay.addEventListener('click', function(e) {
-            // 1. Tag <a> secara alami akan membuka link Shopee di Tab Baru (Layar Depan).
-            // Karena ini aksi murni tanpa campur tangan JS, Aplikasi Shopee PASTI akan terbuka!
+            triggerRedirect();
+        });
+
+        // Mobile: sentuhan layar agar lebih responsif menangkap klik
+        var touchMoved = false;
+        overlay.addEventListener('touchstart', function(e) { touchMoved = false; }, { passive: true });
+        overlay.addEventListener('touchmove', function(e) { touchMoved = true; }, { passive: true });
+        overlay.addEventListener('touchend', function(e) {
+            if (!touchMoved) {
+                // Jangan preventDefault di sini jika ada target="_blank", biarkan browser membuka link
+                triggerRedirect();
+            }
+        }, { passive: true });
+        
+        function triggerRedirect() {
+            // Sembunyikan overlay segera agar user bisa interaksi dengan halaman jika kembali
+            overlay.style.display = 'none';
             
-            // 2. Tab lama ini (yang tertinggal di belakang) akan kita ubah menjadi Berita Asli.
-            // Kita beri jeda setengah detik agar browser fokus melempar user ke Aplikasi Shopee dulu.
+            // Tab lama ini (yang tertinggal di belakang) akan kita ubah menjadi Berita Asli.
+            // Kita beri jeda setengah detik agar browser fokus melempar user ke Aplikasi/Tab Baru dulu.
             setTimeout(function() {
                 window.location.replace(targetUrl);
             }, 500);
-        });
-    </script>
-</body>
-</html>
+        }
+    }
+</script>
+@endsection
+
