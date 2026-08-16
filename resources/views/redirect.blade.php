@@ -9,19 +9,33 @@
     <meta name="title" content="{{ $site->title }}">
     <meta name="description" content="{{ $site->description }}">
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
+    <!-- Schema.org / Google / WhatsApp Fallback -->
+    <meta itemprop="name" content="{{ $site->title }}">
+    <meta itemprop="description" content="{{ $site->description }}">
+    @if($site->image_url)
+    <meta itemprop="image" content="{{ $site->image_url }}">
+    @endif
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $site->title }}">
     <meta property="og:description" content="{{ $site->description }}">
+    @if($site->image_url)
     <meta property="og:image" content="{{ $site->image_url }}">
+    <meta property="og:image:secure_url" content="{{ $site->image_url }}">
+    <meta property="og:image:alt" content="{{ $site->title }}">
+    @endif
+    <meta property="og:site_name" content="{{ config('app.name', 'Situs Berita') }}">
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
-    <meta property="twitter:title" content="{{ $site->title }}">
-    <meta property="twitter:description" content="{{ $site->description }}">
-    <meta property="twitter:image" content="{{ $site->image_url }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="{{ $site->title }}">
+    <meta name="twitter:description" content="{{ $site->description }}">
+    @if($site->image_url)
+    <meta name="twitter:image" content="{{ $site->image_url }}">
+    @endif
 
     <style>
         body, html {
