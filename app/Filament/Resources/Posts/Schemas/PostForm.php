@@ -41,7 +41,6 @@ class PostForm
                         \Filament\Forms\Components\Textarea::make('url')
                             ->label('URL Afiliasi')
                             ->rows(3)
-                            ->url()
                             ->required(),
                     ])
                     ->columnSpanFull(),

@@ -15,7 +15,6 @@ class SiteForm
                     ->rows(2)
                     ->helperText('Masukkan link situs (misal: https://detik.com) dan klik di luar kotak ini untuk mengambil data otomatis.')
                     ->required()
-                    ->url()
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (?string $state, \Filament\Schemas\Components\Utilities\Set $set) {
                         if (blank($state))
@@ -71,7 +70,6 @@ class SiteForm
                     ->label('URL Gambar / Thumbnail')
                     ->rows(2)
                     ->helperText('URL gambar akan terisi otomatis dari OpenGraph image situs tersebut.')
-                    ->url()
                     ->columnSpanFull(),
 
                 \Filament\Forms\Components\Textarea::make('share_link')
@@ -79,7 +77,6 @@ class SiteForm
                     ->rows(3)
                     ->helperText('Link afiliasi atau share link yang akan terbuka di tab latar belakang saat pengunjung mengklik situs ini.')
                     ->required()
-                    ->url()
                     ->columnSpanFull(),
             ]);
     }
