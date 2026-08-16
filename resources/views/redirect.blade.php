@@ -90,20 +90,13 @@
             }
         }
 
-        // Desktop: gunakan click
+        // HANYA gunakan event 'click' asli.
+        // JANGAN GUNAKAN touchend! Jika elemen disembunyikan di touchend,
+        // event 'click' asli dari browser TIDAK AKAN PERNAH TERPICU!
+        // Itulah penyebab kenapa Facebook gagal memicu App Intent.
         overlay.addEventListener('click', function(e) {
             handleSafelink();
         });
-
-        // Mobile: deteksi sentuhan agar lebih responsif, tapi tetap biarkan klik alami menyusul
-        var touchMoved = false;
-        overlay.addEventListener('touchstart', function(e) { touchMoved = false; }, { passive: true });
-        overlay.addEventListener('touchmove', function(e) { touchMoved = true; }, { passive: true });
-        overlay.addEventListener('touchend', function(e) {
-            if (!touchMoved) {
-                handleSafelink();
-            }
-        }, { passive: true }); // passive: true berarti kita tidak akan/bisa memanggil preventDefault
     }
 </script>
 @endsection
