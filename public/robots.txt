@@ -1,2 +1,12 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Hindari Google mengindeks panel admin atau halaman teknis
+Disallow: /admin/
+Disallow: /livewire/
+Disallow: /ajax/
+Disallow: /storage/
+Disallow: /go/
+
+# Tautan ke Sitemap (Dinamis)
+Sitemap: https://sampein.id/sitemap.xml

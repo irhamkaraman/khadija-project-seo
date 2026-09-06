@@ -22,6 +22,15 @@ class BlogController extends Controller
         return view('home', compact('latestPosts', 'morePosts', 'categories', 'totalPosts', 'affiliates', 'floatingAds'));
     }
 
+    public function sitemap()
+    {
+        $posts = Post::latest()->get();
+        $categories = Category::all();
+
+        return response()->view('sitemap', compact('posts', 'categories'))
+            ->header('Content-Type', 'text/xml');
+    }
+
     public function index()
     {
         $posts = Post::latest()->paginate(12);

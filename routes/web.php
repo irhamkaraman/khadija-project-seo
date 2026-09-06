@@ -8,6 +8,7 @@ use App\Http\Controllers\SiteRedirectController;
 use App\Http\Controllers\AffiliateRedirectController;
 
 Route::get('/', [BlogController::class, 'home'])->name('home');
+Route::get('/sitemap.xml', [BlogController::class, 'sitemap'])->name('sitemap');
 Route::get('/ajax/ads', [BlogController::class, 'ajaxAds'])->name('ajax.ads');
 
 Route::get('/og-image/{slug}.jpg', [BlogController::class, 'ogImage'])
