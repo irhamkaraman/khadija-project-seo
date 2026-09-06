@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\AffiliateLinks\Tables;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteBulkAction;
 
 class AffiliateLinksTable
 {
@@ -18,8 +18,8 @@ class AffiliateLinksTable
             ->columns([
                 ImageColumn::make('image_url')
                     ->label('Gambar')
-                    ->height(56)
-                    ->width(80)
+                    ->imageHeight(56)
+                    ->imageWidth(80)
                     ->defaultImageUrl(url('/favicon.ico'))
                     ->extraImgAttributes(['style' => 'object-fit:cover; border-radius:6px;']),
 
@@ -63,11 +63,13 @@ class AffiliateLinksTable
                     ->trueLabel('Aktif')
                     ->falseLabel('Nonaktif'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }
