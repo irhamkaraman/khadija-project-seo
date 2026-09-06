@@ -149,54 +149,62 @@
         ::-webkit-scrollbar-thumb { background: #52a457; border-radius: 3px; }
 
         /* Prose dark */
-        .dark .article-prose h1, .dark .article-prose h2, .dark .article-prose h3 {
+        .dark .article-prose h1, .dark .article-prose h2, .dark .article-prose h3, .dark .article-prose h4, .dark .article-prose h5, .dark .article-prose h6 {
             font-family: 'Playfair Display', serif;
-            color: #f0f7f0;
+            color: #f8fafc;
             margin-top: 2rem;
             margin-bottom: 1rem;
-            line-height: 1.3;
+            line-height: 1.35;
         }
         .dark .article-prose h1 { font-size: 2rem; }
         .dark .article-prose h2 { font-size: 1.5rem; }
         .dark .article-prose h3 { font-size: 1.25rem; }
-        .dark .article-prose p { margin-bottom: 1.25rem; color: #b0b9cc; line-height: 1.9; }
-        .dark .article-prose a { color: #52a457; text-decoration: underline; }
+        .dark .article-prose h4 { font-size: 1.125rem; }
+        .dark .article-prose p { margin-bottom: 1.35rem; color: #cbd5e1; line-height: 1.9; font-size: 1.0625rem; }
+        .dark .article-prose a { color: #4ade80; text-decoration: underline; font-weight: 500; }
+        .dark .article-prose a:hover { color: #86efac; }
         .dark .article-prose img { border-radius: 0.75rem; width: 100%; height: auto; margin: 1.5rem 0; }
-        .dark .article-prose ul, .dark .article-prose ol { padding-left: 1.5rem; color: #b0b9cc; margin-bottom: 1.25rem; }
+        .dark .article-prose ul, .dark .article-prose ol { padding-left: 1.5rem; color: #cbd5e1; margin-bottom: 1.35rem; }
         .dark .article-prose li { margin-bottom: 0.5rem; line-height: 1.8; }
         .dark .article-prose blockquote {
-            border-left: 3px solid #2d8533;
-            padding-left: 1.5rem;
+            border-left: 3px solid #22c55e;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding: 1rem 1.5rem;
             margin: 1.5rem 0;
-            color: #8593b0;
+            color: #94a3b8;
             font-style: italic;
         }
-        .dark .article-prose strong { color: #dceede; font-weight: 600; }
+        .dark .article-prose strong { color: #f1f5f9; font-weight: 600; }
 
         /* Prose light */
-        .article-prose h1, .article-prose h2, .article-prose h3 {
+        .article-prose h1, .article-prose h2, .article-prose h3, .article-prose h4, .article-prose h5, .article-prose h6 {
             font-family: 'Playfair Display', serif;
-            color: #1a1f2e;
+            color: #0f172a;
             margin-top: 2rem;
             margin-bottom: 1rem;
-            line-height: 1.3;
+            line-height: 1.35;
         }
         .article-prose h1 { font-size: 2rem; }
         .article-prose h2 { font-size: 1.5rem; }
         .article-prose h3 { font-size: 1.25rem; }
-        .article-prose p { margin-bottom: 1.25rem; color: #3f4866; line-height: 1.9; }
-        .article-prose a { color: #1e6b24; text-decoration: underline; }
+        .article-prose h4 { font-size: 1.125rem; }
+        .article-prose p { margin-bottom: 1.35rem; color: #334155; line-height: 1.9; font-size: 1.0625rem; }
+        .article-prose a { color: #15803d; text-decoration: underline; font-weight: 500; }
+        .article-prose a:hover { color: #166534; }
         .article-prose img { border-radius: 0.75rem; width: 100%; height: auto; margin: 1.5rem 0; }
-        .article-prose ul, .article-prose ol { padding-left: 1.5rem; color: #3f4866; margin-bottom: 1.25rem; }
+        .article-prose ul, .article-prose ol { padding-left: 1.5rem; color: #334155; margin-bottom: 1.35rem; }
         .article-prose li { margin-bottom: 0.5rem; line-height: 1.8; }
         .article-prose blockquote {
-            border-left: 3px solid #2d8533;
-            padding-left: 1.5rem;
+            border-left: 3px solid #16a34a;
+            background: #f8fafc;
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding: 1rem 1.5rem;
             margin: 1.5rem 0;
-            color: #637298;
+            color: #475569;
             font-style: italic;
         }
-        .article-prose strong { color: #134318; font-weight: 600; }
+        .article-prose strong { color: #0f172a; font-weight: 600; }
 
         /* Animasi card hover */
         .post-card { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; }
