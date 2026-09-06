@@ -42,6 +42,9 @@ class BlogController extends Controller
     public function show($slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
+        
+        // Increment views
+        $post->increment('views');
 
         // Pra-kompresi / generate gambar OG di awal agar saat link dibagikan ke WhatsApp, gambar sudah siap saji (< 10ms)
         try {
@@ -57,8 +60,25 @@ class BlogController extends Controller
                 $randomShareLink = $links[array_rand($links)];
             }
         }
+
+        // Get Related, Latest, Popular posts
+        $relatedPosts = Post::where('category_id', $post->category_id)
+            ->where('id', '!=', $post->id)
+            ->latest()
+            ->take(6)
+            ->get();
+
+        $latestPosts = Post::where('id', '!=', $post->id)
+            ->latest()
+            ->take(6)
+            ->get();
+
+        $popularPosts = Post::where('id', '!=', $post->id)
+            ->orderByDesc('views')
+            ->take(6)
+            ->get();
         
-        return view('blog.show', compact('post', 'randomShareLink'));
+        return view('blog.show', compact('post', 'randomShareLink', 'relatedPosts', 'latestPosts', 'popularPosts'));
     }
 
     public function ajaxAds(Request $request)

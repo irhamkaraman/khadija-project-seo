@@ -201,6 +201,88 @@
         @endif
 
     </div>
+
+    {{-- REKOMENDASI BACAAN --}}
+    <div class="max-w-6xl mx-auto mt-20 pt-12 border-t dark:border-urban-800/60 border-urban-200">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            
+            {{-- Terpopuler --}}
+            <div>
+                <h3 class="font-display font-bold text-xl mb-6 dark:text-white text-urban-950 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                    Paling Populer
+                </h3>
+                <div class="space-y-6">
+                    @foreach($popularPosts as $rp)
+                    <a href="{{ route('blog.show', $rp->slug) }}" class="group flex gap-4 items-start">
+                        <div class="shrink-0 w-24 h-20 rounded-xl overflow-hidden bg-urban-100 dark:bg-urban-800 border dark:border-urban-800/50 border-urban-200">
+                            <img src="{{ $rp->asset_url }}" alt="{{ $rp->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm dark:text-urban-200 text-urban-800 group-hover:text-forest-600 dark:group-hover:text-forest-400 transition-colors line-clamp-2 leading-snug">{{ $rp->title }}</h4>
+                            <p class="text-[11px] font-medium dark:text-urban-500 text-urban-500 mt-1.5 flex items-center gap-1.5">
+                                <span>{{ $rp->created_at->translatedFormat('d M Y') }}</span>
+                                <span class="w-1 h-1 rounded-full bg-urban-300 dark:bg-urban-600"></span>
+                                <span class="text-red-600 dark:text-red-400 font-semibold">{{ number_format($rp->views) }}x dibaca</span>
+                            </p>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Terkait --}}
+            <div>
+                <h3 class="font-display font-bold text-xl mb-6 dark:text-white text-urban-950 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                    Artikel Terkait
+                </h3>
+                <div class="space-y-6">
+                    @foreach($relatedPosts as $rp)
+                    <a href="{{ route('blog.show', $rp->slug) }}" class="group flex gap-4 items-start">
+                        <div class="shrink-0 w-24 h-20 rounded-xl overflow-hidden bg-urban-100 dark:bg-urban-800 border dark:border-urban-800/50 border-urban-200">
+                            <img src="{{ $rp->asset_url }}" alt="{{ $rp->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm dark:text-urban-200 text-urban-800 group-hover:text-forest-600 dark:group-hover:text-forest-400 transition-colors line-clamp-2 leading-snug">{{ $rp->title }}</h4>
+                            <p class="text-[11px] font-medium dark:text-urban-500 text-urban-500 mt-1.5 flex items-center gap-1.5">
+                                <span class="text-forest-600 dark:text-forest-400 font-semibold">{{ $rp->category->name ?? '' }}</span>
+                                <span class="w-1 h-1 rounded-full bg-urban-300 dark:bg-urban-600"></span>
+                                <span>{{ $rp->created_at->translatedFormat('d M Y') }}</span>
+                            </p>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Terbaru --}}
+            <div>
+                <h3 class="font-display font-bold text-xl mb-6 dark:text-white text-urban-950 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Baru Saja Rilis
+                </h3>
+                <div class="space-y-6">
+                    @foreach($latestPosts as $rp)
+                    <a href="{{ route('blog.show', $rp->slug) }}" class="group flex gap-4 items-start">
+                        <div class="shrink-0 w-24 h-20 rounded-xl overflow-hidden bg-urban-100 dark:bg-urban-800 border dark:border-urban-800/50 border-urban-200">
+                            <img src="{{ $rp->asset_url }}" alt="{{ $rp->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm dark:text-urban-200 text-urban-800 group-hover:text-forest-600 dark:group-hover:text-forest-400 transition-colors line-clamp-2 leading-snug">{{ $rp->title }}</h4>
+                            <p class="text-[11px] font-medium dark:text-urban-500 text-urban-500 mt-1.5 flex items-center gap-1.5">
+                                <span class="text-blue-600 dark:text-blue-400 font-semibold uppercase tracking-wider">Baru</span>
+                                <span class="w-1 h-1 rounded-full bg-urban-300 dark:bg-urban-600"></span>
+                                <span>{{ $rp->created_at->diffForHumans() }}</span>
+                            </p>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+
+        </div>
+    </div>
 </article>
 
 {{-- Safelink Overlay --}}

@@ -13,6 +13,7 @@ class Post extends Model
         'content',
         'image_url',
         'share_links',
+        'views',
     ];
 
     protected $casts = [
