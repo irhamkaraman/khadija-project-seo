@@ -33,7 +33,16 @@
     <meta property="og:url"                 content="{{ $layoutOgUrl }}">
     <meta property="og:image"               content="{{ $layoutOgImageSecure }}">
     <meta property="og:image:secure_url"    content="{{ $layoutOgImageSecure }}">
-    <meta property="og:image:type"          content="image/jpeg">
+    @php
+        $ogExt = pathinfo(parse_url($layoutOgImageSecure, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION);
+        $ogMime = match(strtolower($ogExt)) {
+            'png' => 'image/png',
+            'webp' => 'image/webp',
+            'gif' => 'image/gif',
+            default => 'image/jpeg',
+        };
+    @endphp
+    <meta property="og:image:type"          content="{{ $ogMime }}">
     <meta property="og:image:width"         content="1200">
     <meta property="og:image:height"        content="630">
     <meta property="og:image:alt"           content="{{ $layoutOgTitle }}">
