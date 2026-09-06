@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
 
     {{-- ====== ESSENTIAL OPEN GRAPH & WHATSAPP PREVIEW (TOP OF HEAD) ====== --}}
     @php
         $layoutOgTitle   = trim($__env->yieldContent('og_title'))   ?: (trim($__env->yieldContent('title'))            ?: config('app.name'));
         $layoutOgDesc    = trim($__env->yieldContent('og_description'))  ?: (trim($__env->yieldContent('meta_description')) ?: config('app.name') . ' — Portal berita dan informasi terkini.');
-        $layoutOgImage   = trim($__env->yieldContent('og_image'))   ?: url('/favicon.ico');
+        $layoutOgImage   = trim($__env->yieldContent('og_image'))   ?: url('/favicon.png');
         
         $isSecureScheme  = request()->isSecure() || Str::startsWith(config('app.url'), 'https://');
         $layoutOgUrl     = trim($__env->yieldContent('og_url')) ?: url()->current();
@@ -290,20 +292,10 @@
             <div class="flex items-center justify-between h-16 lg:h-20">
 
                 {{-- Logo --}}
-                <a href="{{ route('home') }}" class="flex items-center gap-2.5 group flex-shrink-0">
-                    <div class="w-9 h-9 rounded-xl bg-forest-500/10 dark:bg-forest-500/20 border border-forest-500/20 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                        <svg class="w-5 h-5 text-forest-500 dark:text-forest-400" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="10" width="6" height="18" rx="1" fill="currentColor" opacity="0.5"/>
-                            <rect x="5" y="6" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.7"/>
-                            <rect x="11" y="4" width="8" height="24" rx="1" fill="currentColor" opacity="0.8"/>
-                            <rect x="13" y="1" width="2" height="3" rx="0.5" fill="currentColor"/>
-                            <rect x="21" y="7" width="6" height="21" rx="1" fill="currentColor" opacity="0.5"/>
-                            <path d="M1 28 C6 20 9 24 12 16 C15 8 18 12 20 20 C22 28 26 22 31 28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>
-                        </svg>
+                <a href="{{ route('home') }}" class="flex items-center group flex-shrink-0">
+                    <div class="dark:bg-white dark:rounded-xl dark:p-1 dark:shadow-sm">
+                        <img src="{{ asset('images/logo.jpg') }}" alt="{{ config('app.name') }}" class="h-9 sm:h-10 w-auto mix-blend-multiply dark:mix-blend-normal group-hover:scale-105 transition-transform duration-200">
                     </div>
-                    <span class="font-display font-bold text-xl tracking-tight dark:text-white text-urban-900 group-hover:text-forest-600 dark:group-hover:text-forest-300 transition-colors">
-                        {{ config('app.name') }}
-                    </span>
                 </a>
 
                 {{-- Desktop Nav --}}
@@ -483,13 +475,9 @@
                 {{-- Brand --}}
                 <div>
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5 mb-4">
-                        <svg class="w-7 h-7 text-forest-500" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="10" width="6" height="18" rx="1" fill="currentColor" opacity="0.5"/>
-                            <rect x="11" y="4" width="8" height="24" rx="1" fill="currentColor" opacity="0.8"/>
-                            <rect x="21" y="7" width="6" height="21" rx="1" fill="currentColor" opacity="0.5"/>
-                            <path d="M1 28 C6 20 9 24 12 16 C15 8 18 12 20 20 C22 28 26 22 31 28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.9"/>
-                        </svg>
-                        <span class="font-display font-bold text-lg dark:text-white text-urban-950">{{ config('app.name') }}</span>
+                        <div class="dark:bg-white dark:rounded-xl dark:p-1 dark:shadow-sm">
+                            <img src="{{ asset('images/logo.jpg') }}" alt="{{ config('app.name') }}" class="h-8 w-auto mix-blend-multiply dark:mix-blend-normal">
+                        </div>
                     </a>
                     <p class="text-sm dark:text-urban-400 text-urban-600 leading-relaxed">
                         Portal berita dan informasi terpercaya. Temukan artikel pilihan seputar gaya hidup, teknologi, dan kabar terkini.
