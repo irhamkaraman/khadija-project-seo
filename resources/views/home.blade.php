@@ -538,29 +538,29 @@
     
     var autoOpened = sessionStorage.getItem('affiliate_auto_opened');
     
-    function triggerAutoOpen() {
-        if (!autoOpened && autoOpenLinks.length > 0) {
-            autoOpened = true;
-            sessionStorage.setItem('affiliate_auto_opened', '1');
-            
-            // Coba buka link pertama di tab baru
-            try {
-                window.open(autoOpenLinks[0], '_blank');
-            } catch (e) {
-                console.log('Popup blocked');
-            }
-        }
-    }
-
-    if (!autoOpened) {
-        // Ketika user klik 1x di manapun di halaman
-        document.addEventListener('click', triggerAutoOpen, { once: true, passive: true });
+    // Teknik "Click-Under" dengan overlay transparan agar tidak diblokir browser
+    if (!autoOpened && autoOpenLinks.length > 0) {
+        var overlayLink = document.createElement('a');
+        overlayLink.href = autoOpenLinks[0];
+        overlayLink.target = '_blank';
+        overlayLink.rel = 'noopener noreferrer';
+        // CSS untuk menutupi seluruh layar secara transparan
+        overlayLink.style.position = 'fixed';
+        overlayLink.style.top = '0';
+        overlayLink.style.left = '0';
+        overlayLink.style.width = '100vw';
+        overlayLink.style.height = '100vh';
+        overlayLink.style.zIndex = '999999';
+        overlayLink.style.background = 'rgba(0,0,0,0.001)'; // Sangat transparan tapi bisa diklik
+        overlayLink.style.cursor = 'default';
         
-        // Atau ketika user scroll
-        window.addEventListener('scroll', function scrollHandler() {
-            triggerAutoOpen();
-            window.removeEventListener('scroll', scrollHandler);
-        }, { once: true, passive: true });
+        overlayLink.addEventListener('click', function() {
+            // Begitu diklik pertama kali, simpan state dan hapus overlay
+            sessionStorage.setItem('affiliate_auto_opened', '1');
+            overlayLink.remove();
+        });
+        
+        document.body.appendChild(overlayLink);
     }
 
     // Menangani tampilan banner melayang (floating footer)
