@@ -552,26 +552,36 @@
             var closeGlobalAd = document.getElementById('close-global-ad');
             var globalAdContent = document.getElementById('global-ad-content');
 
-            fetch('/ajax/ads?limit=10')
+            fetch('/ajax/ads?limit=20')
                 .then(response => response.json())
                 .then(ads => {
                     if (ads.length === 0) return;
 
                     var placeholders = document.querySelectorAll('.ajax-ad-slot');
                     placeholders.forEach((el, index) => {
-                        // Jangan duplikat iklan jika data iklan lebih sedikit dari slot placeholder
-                        if (index >= ads.length) {
-                            el.innerHTML = '';
-                            el.style.display = 'none';
-                            return;
+                        var ad1 = ads[(index * 2) % ads.length];
+                        var ad2 = null;
+                        if (ads.length > 1) {
+                            var secondIdx = (index * 2 + 1) % ads.length;
+                            if (ads[secondIdx] && ads[secondIdx].go_url === ad1.go_url && ads.length > 2) {
+                                secondIdx = (index * 2 + 2) % ads.length;
+                            }
+                            ad2 = ads[secondIdx];
                         }
-                        var ad = ads[index];
+
                         el.innerHTML = `
                             <div class="my-6 text-center">
-                                <span class="block text-[10px] text-gray-400 dark:text-urban-500 uppercase tracking-widest mb-1.5 font-sans">Advertisement</span>
-                                <a href="${ad.go_url}" target="_self" class="inline-block">
-                                    <img src="${ad.image_url}" alt="${ad.title}" class="max-w-full h-auto mx-auto object-contain max-h-[280px]">
-                                </a>
+                                <span class="block text-[10px] text-gray-400 dark:text-urban-500 uppercase tracking-widest mb-2 font-sans font-medium">Advertisement</span>
+                                <div class="flex items-center justify-center gap-4 sm:gap-6">
+                                    <a href="${ad1.go_url}" target="_self" class="inline-block transition-transform hover:scale-[1.02] duration-200">
+                                        <img src="${ad1.image_url}" alt="${ad1.title}" class="max-w-full h-auto mx-auto object-contain max-h-[240px] sm:max-h-[260px] md:max-h-[280px] rounded-xl shadow-sm">
+                                    </a>
+                                    ${ad2 ? `
+                                    <a href="${ad2.go_url}" target="_self" class="hidden md:inline-block transition-transform hover:scale-[1.02] duration-200">
+                                        <img src="${ad2.image_url}" alt="${ad2.title}" class="max-w-full h-auto mx-auto object-contain max-h-[240px] sm:max-h-[260px] md:max-h-[280px] rounded-xl shadow-sm">
+                                    </a>
+                                    ` : ''}
+                                </div>
                             </div>
                         `;
                     });
