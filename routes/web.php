@@ -9,6 +9,8 @@ use App\Http\Controllers\SiteRedirectController;
 Route::get('/', [BlogController::class, 'home'])->name('home');
 Route::get('/ajax/ads', [BlogController::class, 'ajaxAds'])->name('ajax.ads');
 
+Route::get('/og-image/{slug}.jpg', [BlogController::class, 'ogImage'])->name('blog.og-image');
+
 Route::get('/file/{path}', function (string $path) {
     $filePath = storage_path('app/public/' . $path);
 
@@ -17,10 +19,14 @@ Route::get('/file/{path}', function (string $path) {
     }
 
     $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+    $fileSize = filesize($filePath);
 
     return response()->file($filePath, [
-        'Content-Type'  => $mimeType,
-        'Cache-Control' => 'public, max-age=2592000', // cache 30 hari
+        'Content-Type'                => $mimeType,
+        'Content-Length'              => $fileSize,
+        'Cache-Control'               => 'public, max-age=2592000, immutable',
+        'Access-Control-Allow-Origin' => '*',
+        'Accept-Ranges'               => 'bytes',
     ]);
 })->where('path', '.*')->name('storage.serve');
 

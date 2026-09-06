@@ -3,11 +3,18 @@
 @php
     $seoTitle    = $post->title . ' | ' . config('app.name');
     $seoDesc     = Str::limit(strip_tags($post->content), 155);
-    $seoImage    = $post->image_url ? url('/file/' . $post->image_url) : null;
-    $seoImageAbs = $seoImage
-                    ? (Str::startsWith($seoImage, 'http') ? $seoImage : config('app.url') . $seoImage)
-                    : config('app.url') . '/favicon.ico';
     $seoUrl      = route('blog.show', $post->slug);
+    
+    if ($post->image_url) {
+        $seoImageAbs = route('blog.og-image', $post->slug);
+    } else {
+        $seoImageAbs = url('/favicon.ico');
+    }
+
+    // Pastikan selalu HTTPS di domain live (wajib bagi WhatsApp & Instagram)
+    if (Str::startsWith($seoImageAbs, 'http://') && !str_contains($seoImageAbs, 'localhost') && !str_contains($seoImageAbs, '127.0.0.1')) {
+        $seoImageAbs = 'https://' . Str::after($seoImageAbs, 'http://');
+    }
     $publishedAt = $post->created_at->toIso8601String();
     $modifiedAt  = $post->updated_at->toIso8601String();
     $catName     = $post->category->name ?? '';

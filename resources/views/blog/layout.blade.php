@@ -32,27 +32,43 @@
     @php
         $layoutOgTitle   = trim($__env->yieldContent('og_title'))   ?: (trim($__env->yieldContent('title'))            ?: config('app.name'));
         $layoutOgDesc    = trim($__env->yieldContent('og_description'))  ?: (trim($__env->yieldContent('meta_description')) ?: config('app.name') . ' — Portal berita dan informasi terkini.');
-        $layoutOgImage   = trim($__env->yieldContent('og_image'))   ?: config('app.url') . '/favicon.ico';
+        $layoutOgImage   = trim($__env->yieldContent('og_image'))   ?: url('/favicon.ico');
+        
+        $layoutOgImageSecure = $layoutOgImage;
+        if (Str::startsWith($layoutOgImageSecure, 'http://') && !str_contains($layoutOgImageSecure, 'localhost') && !str_contains($layoutOgImageSecure, '127.0.0.1')) {
+            $layoutOgImageSecure = 'https://' . Str::after($layoutOgImageSecure, 'http://');
+        }
+
         $layoutTwTitle   = trim($__env->yieldContent('twitter_title'))   ?: $layoutOgTitle;
         $layoutTwDesc    = trim($__env->yieldContent('twitter_description')) ?: $layoutOgDesc;
     @endphp
 
-    {{-- ====== OPEN GRAPH ====== --}}
-    <meta property="og:type"        content="@yield('og_type', 'website')">
-    <meta property="og:site_name"   content="{{ config('app.name') }}">
-    <meta property="og:title"       content="{{ $layoutOgTitle }}">
-    <meta property="og:description" content="{{ $layoutOgDesc }}">
-    <meta property="og:url"         content="@yield('og_url', url()->current())">
-    <meta property="og:image"       content="{{ $layoutOgImage }}">
-    <meta property="og:image:width"  content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:locale"      content="id_ID">
+    {{-- ====== OPEN GRAPH (WhatsApp, Facebook, Instagram, LinkedIn) ====== --}}
+    <meta property="og:type"                content="@yield('og_type', 'website')">
+    <meta property="og:site_name"           content="{{ config('app.name') }}">
+    <meta property="og:title"               content="{{ $layoutOgTitle }}">
+    <meta property="og:description"         content="{{ $layoutOgDesc }}">
+    <meta property="og:url"                 content="@yield('og_url', url()->current())">
+    <meta property="og:image"               content="{{ $layoutOgImageSecure }}">
+    <meta property="og:image:secure_url"    content="{{ $layoutOgImageSecure }}">
+    <meta property="og:image:type"          content="image/jpeg">
+    <meta property="og:image:width"         content="1200">
+    <meta property="og:image:height"        content="630">
+    <meta property="og:image:alt"           content="{{ $layoutOgTitle }}">
+    <meta property="og:locale"              content="id_ID">
+
+    {{-- ====== SCHEMA.ORG MICRODATA (WhatsApp & Google Fallback) ====== --}}
+    <meta itemprop="name"                   content="{{ $layoutOgTitle }}">
+    <meta itemprop="description"            content="{{ $layoutOgDesc }}">
+    <meta itemprop="image"                  content="{{ $layoutOgImageSecure }}">
+    <link rel="image_src"                   href="{{ $layoutOgImageSecure }}">
 
     {{-- ====== TWITTER CARD ====== --}}
-    <meta name="twitter:card"        content="@yield('twitter_card', 'summary_large_image')">
-    <meta name="twitter:title"       content="{{ $layoutTwTitle }}">
-    <meta name="twitter:description" content="{{ $layoutTwDesc }}">
-    <meta name="twitter:image"       content="{{ $layoutOgImage }}">
+    <meta name="twitter:card"               content="@yield('twitter_card', 'summary_large_image')">
+    <meta name="twitter:title"              content="{{ $layoutTwTitle }}">
+    <meta name="twitter:description"        content="{{ $layoutTwDesc }}">
+    <meta name="twitter:image"              content="{{ $layoutOgImageSecure }}">
+    <meta name="twitter:image:src"          content="{{ $layoutOgImageSecure }}">
 
     @yield('article_meta')
     @yield('json_ld')
