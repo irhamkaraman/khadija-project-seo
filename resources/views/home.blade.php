@@ -11,93 +11,6 @@
 @section('og_url', route('home'))
 
 @section('extra_styles')
-/* Hero animations */
-@keyframes float-up {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(45, 133, 51, 0.2); }
-    50%       { box-shadow: 0 0 40px rgba(45, 133, 51, 0.5); }
-}
-.hero-animate-1 { animation: float-up 0.6s ease both; }
-.hero-animate-2 { animation: float-up 0.6s ease 0.1s both; }
-.hero-animate-3 { animation: float-up 0.6s ease 0.2s both; }
-.hero-animate-4 { animation: float-up 0.6s ease 0.35s both; }
-.hero-animate-5 { animation: float-up 0.6s ease 0.5s both; }
-.pulse-glow     { animation: pulse-glow 3s ease-in-out infinite; }
-
-/* Gradient text */
-.gradient-text {
-    background: linear-gradient(135deg, #52a457 0%, #86c489 50%, #2d8533 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Stats card */
-.stat-card {
-    position: relative;
-    overflow: hidden;
-}
-.stat-card::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 60px; height: 60px;
-    background: radial-gradient(circle, rgba(45,133,51,0.15) 0%, transparent 70%);
-    border-radius: 50%;
-}
-
-/* Featured gradient */
-.featured-overlay {
-    background: linear-gradient(to top, rgba(13,16,23,0.97) 0%, rgba(13,16,23,0.6) 50%, rgba(13,16,23,0.1) 100%);
-}
-.dark .featured-overlay {
-    background: linear-gradient(to top, rgba(13,16,23,0.97) 0%, rgba(13,16,23,0.6) 50%, rgba(13,16,23,0.1) 100%);
-}
-
-/* Category card hover */
-.cat-card {
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.cat-card:hover {
-    transform: translateY(-4px) scale(1.02);
-}
-
-/* Affiliate card */
-.affiliate-card {
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    overflow: hidden;
-}
-.affiliate-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
-.affiliate-card .badge-promo {
-    animation: pulse-badge 2s ease-in-out infinite;
-}
-@keyframes pulse-badge {
-    0%, 100% { transform: scale(1); }
-    50%       { transform: scale(1.05); }
-}
-
-/* Scroll popup */
-#affiliate-popup {
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-}
-#affiliate-popup.hidden-popup {
-    transform: translateY(120%) scale(0.95);
-    opacity: 0;
-    pointer-events: none;
-}
-#affiliate-popup.visible-popup {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-    pointer-events: all;
-}
-
 /* Sidebar popup desktop */
 #affiliate-sidebar {
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
@@ -116,68 +29,7 @@
 
 @section('content')
 
-<section class="relative px-4 sm:px-6 lg:px-8 pt-8 pb-16 lg:pb-24 overflow-hidden">
 
-    {{-- Background gradient accent --}}
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-forest-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-    <div class="max-w-6xl mx-auto text-center relative">
-
-        {{-- Pill badge --}}
-        <div class="hero-animate-1 inline-flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-forest-900/60 bg-forest-100 dark:border dark:border-forest-700/40 border border-forest-200 dark:text-forest-400 text-forest-700 text-xs font-semibold tracking-wider uppercase mb-6">
-            <span class="w-2 h-2 rounded-full bg-forest-500 animate-pulse"></span>
-            Portal Informasi Terpercaya
-        </div>
-
-        {{-- Heading --}}
-        <h1 class="hero-animate-2 font-display text-4xl sm:text-5xl lg:text-7xl font-black dark:text-white text-urban-900 leading-[1.05] mb-6">
-            Temukan Berita<br>
-            <span class="gradient-text">Terkini & Terpercaya</span>
-        </h1>
-
-        {{-- Subheading --}}
-        <p class="hero-animate-3 dark:text-urban-400 text-urban-500 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Kumpulan artikel pilihan seputar gaya hidup, teknologi, dan informasi terbaru yang dikurasi untuk Anda setiap hari.
-        </p>
-
-        {{-- CTA Buttons --}}
-        <div class="hero-animate-4 flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
-            <a href="{{ route('blog.index') }}"
-               class="pulse-glow inline-flex items-center gap-2 px-8 py-4 bg-forest-500 hover:bg-forest-400 text-white font-bold rounded-2xl text-base transition-all duration-200 shadow-lg shadow-forest-900/30">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                </svg>
-                Baca Semua Artikel
-            </a>
-            @if($categories->count() > 0)
-            <a href="{{ route('blog.category', $categories->first()->slug) }}"
-               class="inline-flex items-center gap-2 px-8 py-4 dark:bg-urban-800/60 bg-urban-100 dark:hover:bg-urban-700/60 hover:bg-urban-200 dark:text-urban-200 text-urban-700 font-semibold rounded-2xl text-base transition-all duration-200 dark:border dark:border-urban-700/40 border border-urban-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                </svg>
-                Jelajahi Kategori
-            </a>
-            @endif
-        </div>
-
-        {{-- Stats Bar --}}
-        <div class="hero-animate-5 grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
-            <div class="stat-card dark:bg-urban-900/60 bg-white/70 dark:border dark:border-urban-800/40 border border-urban-200/60 rounded-2xl p-4 backdrop-blur-sm">
-                <div class="font-display text-3xl font-black gradient-text mb-1">{{ $totalPosts }}</div>
-                <div class="text-xs dark:text-urban-500 text-urban-500 font-medium uppercase tracking-wider">Artikel</div>
-            </div>
-            <div class="stat-card dark:bg-urban-900/60 bg-white/70 dark:border dark:border-urban-800/40 border border-urban-200/60 rounded-2xl p-4 backdrop-blur-sm">
-                <div class="font-display text-3xl font-black gradient-text mb-1">{{ $categories->count() }}</div>
-                <div class="text-xs dark:text-urban-500 text-urban-500 font-medium uppercase tracking-wider">Kategori</div>
-            </div>
-            <div class="stat-card dark:bg-urban-900/60 bg-white/70 dark:border dark:border-urban-800/40 border border-urban-200/60 rounded-2xl p-4 backdrop-blur-sm col-span-2 sm:col-span-1">
-                <div class="font-display text-3xl font-black gradient-text mb-1">∞</div>
-                <div class="text-xs dark:text-urban-500 text-urban-500 font-medium uppercase tracking-wider">Update Harian</div>
-            </div>
-        </div>
-
-    </div>
-</section>
 
 @if($latestPosts->count() > 0)
 <section class="px-4 sm:px-6 lg:px-8 pb-16">
@@ -402,8 +254,8 @@
             </h2>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-{{ min($categories->count(), 4) }} gap-4">
-            @foreach($categories as $cat)
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-{{ min($categories->count(), 5) }} gap-4">
+            @foreach($categories->take(5) as $cat)
             @php
                 $colors = [
                     ['from-forest-600', 'to-forest-800', 'text-forest-100'],
