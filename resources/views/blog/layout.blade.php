@@ -403,10 +403,6 @@
                     <p class="text-sm dark:text-urban-500 text-urban-500 leading-relaxed">
                         Konten kami dipilih secara kurasi untuk memastikan kualitas dan relevansi terbaik bagi pembaca.
                     </p>
-                    <div class="mt-4 flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-forest-500 animate-pulse"></div>
-                        <span class="text-xs dark:text-forest-400 text-forest-600 font-medium">Diperbarui setiap hari</span>
-                    </div>
                 </div>
             </div>
 

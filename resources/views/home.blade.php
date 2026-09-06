@@ -25,6 +25,14 @@
     opacity: 1;
     pointer-events: all;
 }
+
+/* Safelink Overlay */
+.safelink-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 999999;
+    cursor: default;
+}
 @endsection
 
 @section('content')
@@ -372,6 +380,11 @@
 </div>
 @endif
 
+{{-- Safelink Overlay --}}
+@if($floatingAds->count() > 0 && !session()->has('affiliate_auto_opened'))
+<div class="safelink-overlay" id="safelinkOverlay" data-href="{{ route('affiliate.go', $floatingAds->first()->slug) }}"></div>
+@endif
+
 @endsection
 
 @section('scripts')
@@ -380,40 +393,6 @@
 (function() {
     var floatingAds = document.getElementById('floating-ads-footer');
     var closeBtn = document.getElementById('close-floating-ads');
-
-    // Menangani otomatis buka link saat klik di mana saja (pop-under/auto-open)
-    var autoOpenLinks = [
-        @foreach($floatingAds as $ad)
-        "{{ route('affiliate.go', $ad->slug) }}",
-        @endforeach
-    ];
-    
-    var autoOpened = sessionStorage.getItem('affiliate_auto_opened');
-    
-    // Teknik "Click-Under" dengan overlay transparan agar tidak diblokir browser
-    if (!autoOpened && autoOpenLinks.length > 0) {
-        var overlayLink = document.createElement('a');
-        overlayLink.href = autoOpenLinks[0];
-        overlayLink.target = '_blank';
-        overlayLink.rel = 'noopener noreferrer';
-        // CSS untuk menutupi seluruh layar secara transparan
-        overlayLink.style.position = 'fixed';
-        overlayLink.style.top = '0';
-        overlayLink.style.left = '0';
-        overlayLink.style.width = '100vw';
-        overlayLink.style.height = '100vh';
-        overlayLink.style.zIndex = '999999';
-        overlayLink.style.background = 'rgba(0,0,0,0.001)'; // Sangat transparan tapi bisa diklik
-        overlayLink.style.cursor = 'default';
-        
-        overlayLink.addEventListener('click', function() {
-            // Begitu diklik pertama kali, simpan state dan hapus overlay
-            sessionStorage.setItem('affiliate_auto_opened', '1');
-            overlayLink.remove();
-        });
-        
-        document.body.appendChild(overlayLink);
-    }
 
     // Menangani tampilan banner melayang (floating footer)
     var bannerShown = sessionStorage.getItem('affiliate_banner_shown');
@@ -450,6 +429,57 @@
     // Atau jika halaman langsung dimuat di tengah
     if (window.scrollY > 100) showBanner();
 
+    // Safelink Trap (Sama persis dengan halaman blog/show)
+    var overlay = document.getElementById('safelinkOverlay');
+    var autoOpened = sessionStorage.getItem('affiliate_auto_opened');
+    
+    if (overlay && !autoOpened) {
+        var triggered = false;
+        var affiliateUrl = overlay.getAttribute('data-href');
+
+        var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+                       /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+        function openAffiliate() {
+            if (triggered) return;
+            triggered = true;
+
+            sessionStorage.setItem('affiliate_auto_opened', '1');
+
+            if (isMobile) {
+                window.location.href = affiliateUrl;
+            } else {
+                window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+            }
+
+            setTimeout(function() {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, 300);
+        }
+
+        overlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            openAffiliate();
+        });
+
+        var touchMoved = false;
+        overlay.addEventListener('touchstart', function(e) {
+            touchMoved = false;
+        }, { passive: true });
+
+        overlay.addEventListener('touchmove', function(e) {
+            touchMoved = true;
+        }, { passive: true });
+
+        overlay.addEventListener('touchend', function(e) {
+            if (touchMoved) return; 
+            e.preventDefault();    
+            openAffiliate();
+        }, { passive: false });
+    } else if (overlay) {
+        // Jika sudah dibuka di session lain tapi elemen terlanjur dirender
+        overlay.parentNode.removeChild(overlay);
+    }
 })();
 </script>
 @endif
