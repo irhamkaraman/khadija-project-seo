@@ -119,18 +119,18 @@
     <div class="max-w-3xl mx-auto">
 
         {{-- Breadcrumb --}}
-        <nav class="flex items-center gap-2 text-sm dark:text-urban-400 text-urban-600 mb-8">
-            <a href="{{ route('home') }}" class="hover:text-forest-600 dark:hover:text-forest-400 transition-colors">Beranda</a>
-            <svg class="w-3.5 h-3.5 dark:text-urban-600 text-urban-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm dark:text-urban-400 text-urban-600 mb-8">
+            <a href="{{ route('home') }}" class="hover:text-forest-600 dark:hover:text-forest-400 transition-colors shrink-0 whitespace-nowrap">Beranda</a>
+            <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 dark:text-urban-600 text-urban-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
             @if($catSlug)
-            <a href="{{ route('blog.category', $catSlug) }}" class="hover:text-forest-600 dark:hover:text-forest-400 transition-colors">{{ $catName }}</a>
-            <svg class="w-3.5 h-3.5 dark:text-urban-600 text-urban-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="{{ route('blog.category', $catSlug) }}" class="hover:text-forest-600 dark:hover:text-forest-400 transition-colors shrink-0 whitespace-nowrap">{{ $catName }}</a>
+            <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 dark:text-urban-600 text-urban-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
             @endif
-            <span class="dark:text-urban-300 text-urban-800 font-medium truncate max-w-xs">{{ Str::limit($post->title, 40) }}</span>
+            <span class="dark:text-urban-300 text-urban-800 font-medium truncate flex-1 min-w-[100px]">{{ $post->title }}</span>
         </nav>
 
         {{-- Category Badge --}}
