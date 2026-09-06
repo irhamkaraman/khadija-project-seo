@@ -354,7 +354,7 @@
     </div>
 
     {{-- ===================== MAIN CONTENT ===================== --}}
-    <main class="relative z-10 pt-20 lg:pt-24 min-h-screen">
+    <main class="relative z-20 pt-20 lg:pt-24 min-h-screen">
         @yield('content')
     </main>
 
