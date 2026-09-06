@@ -1,16 +1,28 @@
 @php
-    $appUrl = config('app.url');
-    $host = request()->getHttpHost();
+    $appUrl = config('app.url', '');
+    $currentHost = request()->getHttpHost();
     $parsedApp = parse_url($appUrl);
-    if (!empty($parsedApp['host']) && !in_array($parsedApp['host'], ['localhost', '127.0.0.1'])) {
-        $host = $parsedApp['host'] . (isset($parsedApp['port']) ? ':' . $parsedApp['port'] : '');
-    }
+    
+    // Gunakan domain dari APP_URL jika sudah diset ke domain publik, fallback ke request host
+    $host = (!empty($parsedApp['host']) && !in_array($parsedApp['host'], ['localhost', '127.0.0.1']))
+        ? $parsedApp['host'] . (!empty($parsedApp['port']) && !in_array($parsedApp['port'], [80, 443]) ? ':' . $parsedApp['port'] : '')
+        : $currentHost;
 
-    $wwwHost = str_starts_with($host, 'www.') ? $host : 'www.' . $host;
+    $rawHost = request()->getHost();
+    $isLocal = in_array($rawHost, ['localhost', '127.0.0.1']) 
+               || (!empty($parsedApp['host']) && in_array($parsedApp['host'], ['localhost', '127.0.0.1']));
+
+    $scheme = (request()->isSecure() || str_starts_with($appUrl, 'https://') || (!$isLocal && !filter_var($rawHost, FILTER_VALIDATE_IP))) ? 'https://' : 'http://';
     $path = route('blog.show', $record->slug, false);
 
-    $urlWithoutHttps = $wwwHost . $path;
-    $urlWithHttps = 'https://' . $wwwHost . $path;
+    // 1. URL Utama Rekomendasi (Format Lengkap HTTPS)
+    $fullUrl = $scheme . $host . $path;
+
+    // 2. Format alternatif WWW atau tanpa protokol
+    $isWww = str_starts_with($host, 'www.');
+    $altHost = $isWww ? preg_replace('/^www\./i', '', $host) : 'www.' . $host;
+    $altUrl = $isLocal ? $host . $path : ($isWww ? $scheme . $altHost . $path : 'https://' . $altHost . $path);
+    $altLabel = $isLocal ? 'Format Tanpa Protokol' : ($isWww ? 'Format Non-WWW (' . $altHost . ')' : 'Format WWW (www.' . $host . ')');
 @endphp
 
 <div x-data="{
@@ -158,6 +170,15 @@
             height: 14px;
             display: inline-block;
         }
+        .copy-notice-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #93c5fd;
+        }
 
         /* Light Mode Styling */
         html:not(.dark) .copy-article-note {
@@ -181,30 +202,35 @@
             border: 1px solid #d1d5db;
             color: #111827;
         }
+        html:not(.dark) .copy-notice-box {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1e40af;
+        }
     </style>
 
     <div class="copy-article-note">
-        Pilih salah satu format tautan untuk artikel: <span class="copy-article-title">&ldquo;{{ $record->title }}&rdquo;</span>
+        Tautan untuk artikel: <span class="copy-article-title">&ldquo;{{ $record->title }}&rdquo;</span>
     </div>
 
-    {{-- Opsi 1: Tanpa HTTPS (Hanya www) --}}
+    {{-- Opsi 1: URL Resmi (Rekomendasi WhatsApp & Medsos) --}}
     <div class="copy-format-card">
         <div class="copy-card-header">
             <div class="copy-badge-label">
-                <span class="copy-dot-indicator dot-amber"></span>
-                <span>Format WWW (Tanpa HTTPS)</span>
+                <span class="copy-dot-indicator dot-emerald"></span>
+                <span>Format Lengkap (Rekomendasi WhatsApp & Medsos)</span>
             </div>
-            <span class="copy-sub-desc">Tidak perlu https://</span>
+            <span class="copy-sub-desc">Protokol + Domain Penuh</span>
         </div>
         <div class="copy-input-row">
             <input type="text"
                    readonly
-                   value="{{ $urlWithoutHttps }}"
+                   value="{{ $fullUrl }}"
                    @click="$event.target.select()"
                    class="copy-url-input">
             <button type="button"
-                    @click="copyText('{{ $urlWithoutHttps }}', 1)"
-                    :class="copied1 ? 'btn-success-active' : 'btn-amber-theme'"
+                    @click="copyText('{{ $fullUrl }}', 1)"
+                    :class="copied1 ? 'btn-success-active' : 'btn-emerald-theme'"
                     class="copy-action-btn">
                 <template x-if="!copied1">
                     <span style="display: flex; align-items: center; gap: 4px;">
@@ -222,24 +248,24 @@
         </div>
     </div>
 
-    {{-- Opsi 2: Dengan HTTPS (https://www) --}}
+    {{-- Opsi 2: Format Alternatif --}}
     <div class="copy-format-card">
         <div class="copy-card-header">
             <div class="copy-badge-label">
-                <span class="copy-dot-indicator dot-emerald"></span>
-                <span>Format Lengkap HTTPS (https://www...)</span>
+                <span class="copy-dot-indicator dot-amber"></span>
+                <span>{{ $altLabel }}</span>
             </div>
-            <span class="copy-sub-desc">Dengan protokol https://</span>
+            <span class="copy-sub-desc">Alternatif</span>
         </div>
         <div class="copy-input-row">
             <input type="text"
                    readonly
-                   value="{{ $urlWithHttps }}"
+                   value="{{ $altUrl }}"
                    @click="$event.target.select()"
                    class="copy-url-input">
             <button type="button"
-                    @click="copyText('{{ $urlWithHttps }}', 2)"
-                    :class="copied2 ? 'btn-success-active' : 'btn-emerald-theme'"
+                    @click="copyText('{{ $altUrl }}', 2)"
+                    :class="copied2 ? 'btn-success-active' : 'btn-amber-theme'"
                     class="copy-action-btn">
                 <template x-if="!copied2">
                     <span style="display: flex; align-items: center; gap: 4px;">
@@ -256,5 +282,11 @@
             </button>
         </div>
     </div>
+
+    @if($isLocal)
+    <div class="copy-notice-box">
+        ⚠️ <strong>Catatan Pengujian WhatsApp:</strong> Anda saat ini mengakses melalui <code>localhost</code> / IP lokal. Bot WhatsApp (Meta crawler) berjalan di server cloud luar negeri, sehingga <strong>hanya dapat menampilkan gambar jika web sudah di-hosting online / memiliki domain publik</strong> dengan koneksi SSL (HTTPS).
+    </div>
+    @endif
 
 </div>

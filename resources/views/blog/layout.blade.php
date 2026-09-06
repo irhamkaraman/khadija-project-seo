@@ -5,37 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <script>
-        (function() {
-            const stored = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (stored === 'dark' || (!stored && prefersDark) || !stored) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        })();
-    </script>
-
-    {{-- ====== PRIMARY SEO ====== --}}
-    @php
-        $layoutSeoTitle = trim($__env->yieldContent('seo_title'))
-                        ?: (trim($__env->yieldContent('title')) ?: 'Beranda') . ' | ' . config('app.name');
-    @endphp
-    <title>{{ $layoutSeoTitle }}</title>
-    <meta name="description" content="@yield('meta_description', config('app.name') . ' — Portal berita dan informasi terkini seputar gaya hidup, teknologi, dan kabar terbaru.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'berita, informasi, artikel, terkini, ' . config('app.name'))">
-    <meta name="robots" content="@yield('meta_robots', 'index, follow')">
-    <meta name="author" content="@yield('meta_author', config('app.name'))">
-    <link rel="canonical" href="@yield('canonical', url()->current())">
-
+    {{-- ====== ESSENTIAL OPEN GRAPH & WHATSAPP PREVIEW (TOP OF HEAD) ====== --}}
     @php
         $layoutOgTitle   = trim($__env->yieldContent('og_title'))   ?: (trim($__env->yieldContent('title'))            ?: config('app.name'));
         $layoutOgDesc    = trim($__env->yieldContent('og_description'))  ?: (trim($__env->yieldContent('meta_description')) ?: config('app.name') . ' — Portal berita dan informasi terkini.');
         $layoutOgImage   = trim($__env->yieldContent('og_image'))   ?: url('/favicon.ico');
         
+        $isSecureScheme  = request()->isSecure() || Str::startsWith(config('app.url'), 'https://');
+        $layoutOgUrl     = trim($__env->yieldContent('og_url')) ?: url()->current();
+        if ($isSecureScheme && Str::startsWith($layoutOgUrl, 'http://')) {
+            $layoutOgUrl = 'https://' . Str::after($layoutOgUrl, 'http://');
+        }
+
         $layoutOgImageSecure = $layoutOgImage;
-        if (Str::startsWith($layoutOgImageSecure, 'http://') && !str_contains($layoutOgImageSecure, 'localhost') && !str_contains($layoutOgImageSecure, '127.0.0.1')) {
+        if ($isSecureScheme && Str::startsWith($layoutOgImageSecure, 'http://')) {
             $layoutOgImageSecure = 'https://' . Str::after($layoutOgImageSecure, 'http://');
         }
 
@@ -43,12 +26,11 @@
         $layoutTwDesc    = trim($__env->yieldContent('twitter_description')) ?: $layoutOgDesc;
     @endphp
 
-    {{-- ====== OPEN GRAPH (WhatsApp, Facebook, Instagram, LinkedIn) ====== --}}
     <meta property="og:type"                content="@yield('og_type', 'website')">
     <meta property="og:site_name"           content="{{ config('app.name') }}">
     <meta property="og:title"               content="{{ $layoutOgTitle }}">
     <meta property="og:description"         content="{{ $layoutOgDesc }}">
-    <meta property="og:url"                 content="@yield('og_url', url()->current())">
+    <meta property="og:url"                 content="{{ $layoutOgUrl }}">
     <meta property="og:image"               content="{{ $layoutOgImageSecure }}">
     <meta property="og:image:secure_url"    content="{{ $layoutOgImageSecure }}">
     <meta property="og:image:type"          content="image/jpeg">
@@ -56,6 +38,9 @@
     <meta property="og:image:height"        content="630">
     <meta property="og:image:alt"           content="{{ $layoutOgTitle }}">
     <meta property="og:locale"              content="id_ID">
+
+    {{-- Secondary fallback image (jika ada) --}}
+    @yield('extra_og_images')
 
     {{-- ====== SCHEMA.ORG MICRODATA (WhatsApp & Google Fallback) ====== --}}
     <meta itemprop="name"                   content="{{ $layoutOgTitle }}">
@@ -70,8 +55,33 @@
     <meta name="twitter:image"              content="{{ $layoutOgImageSecure }}">
     <meta name="twitter:image:src"          content="{{ $layoutOgImageSecure }}">
 
+    {{-- ====== PRIMARY SEO ====== --}}
+    @php
+        $layoutSeoTitle = trim($__env->yieldContent('seo_title'))
+                        ?: (trim($__env->yieldContent('title')) ?: 'Beranda') . ' | ' . config('app.name');
+    @endphp
+    <title>{{ $layoutSeoTitle }}</title>
+    <meta name="description" content="@yield('meta_description', config('app.name') . ' — Portal berita dan informasi terkini seputar gaya hidup, teknologi, dan kabar terbaru.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'berita, informasi, artikel, terkini, ' . config('app.name'))">
+    <meta name="robots" content="@yield('meta_robots', 'index, follow')">
+    <meta name="author" content="@yield('meta_author', config('app.name'))">
+    <link rel="canonical" href="@yield('canonical', $layoutOgUrl)">
+
     @yield('article_meta')
     @yield('json_ld')
+
+    {{-- Dark Mode instant script --}}
+    <script>
+        (function() {
+            const stored = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (stored === 'dark' || (!stored && prefersDark) || !stored) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
 
     {{-- Tailwind CSS CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>

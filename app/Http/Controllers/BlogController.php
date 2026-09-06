@@ -42,6 +42,13 @@ class BlogController extends Controller
     public function show($slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
+
+        // Pra-kompresi / generate gambar OG di awal agar saat link dibagikan ke WhatsApp, gambar sudah siap saji (< 10ms)
+        try {
+            self::resolveOgImagePath($post);
+        } catch (\Throwable $e) {
+            // Silently continue jika terjadi kendala pada gambar
+        }
         
         $randomShareLink = null;
         if (!empty($post->share_links)) {
@@ -53,6 +60,7 @@ class BlogController extends Controller
         
         return view('blog.show', compact('post', 'randomShareLink'));
     }
+
     public function ajaxAds(Request $request)
     {
         $limit = $request->get('limit', 5);
@@ -74,20 +82,48 @@ class BlogController extends Controller
 
     /**
      * Menyajikan gambar Open Graph yang dioptimasi khusus untuk crawler sosial (WhatsApp, FB, IG, Twitter).
-     * Otomatis kompresi ukuran < 300KB agar thumbnail WhatsApp tidak di-drop.
+     * Otomatis kompresi ukuran < 300KB agar thumbnail WhatsApp dijamin tampil.
      */
     public function ogImage($slug)
     {
         $post = Post::where('slug', $slug)->first();
-        if (!$post || !$post->image_url) {
-            $fallback = public_path('favicon.ico');
-            if (file_exists($fallback)) {
-                return response()->file($fallback, [
-                    'Content-Type' => 'image/x-icon',
-                    'Access-Control-Allow-Origin' => '*',
-                ]);
-            }
-            abort(404);
+        if (!$post || empty($post->image_url)) {
+            return $this->serveFallbackIcon();
+        }
+
+        $serveFile = self::resolveOgImagePath($post);
+
+        if ($serveFile && file_exists($serveFile)) {
+            $mime = str_ends_with($serveFile, '.jpg') || str_ends_with($serveFile, '.jpeg') ? 'image/jpeg' : (mime_content_type($serveFile) ?: 'image/jpeg');
+            return response()->file($serveFile, [
+                'Content-Type'                => $mime,
+                'Content-Length'              => filesize($serveFile),
+                'Cache-Control'               => 'public, max-age=31536000, immutable',
+                'Access-Control-Allow-Origin' => '*',
+                'Accept-Ranges'               => 'bytes',
+            ]);
+        }
+
+        // Jika gambar eksternal dan belum berhasil didownload, redirect langsung ke CDN asli
+        if (\Illuminate\Support\Str::startsWith($post->image_url, ['http://', 'https://'])) {
+            return redirect()->away($post->image_url);
+        }
+
+        return $this->serveFallbackIcon();
+    }
+
+    /**
+     * Memastikan file OG gambar terkompresi (< 300KB) sudah tersedia di disk
+     */
+    public static function resolveOgImagePath(Post $post): ?string
+    {
+        if (empty($post->image_url)) {
+            return null;
+        }
+
+        $cacheDir = storage_path('app/public/og-cache');
+        if (!is_dir($cacheDir)) {
+            @mkdir($cacheDir, 0755, true);
         }
 
         $isExternal = \Illuminate\Support\Str::startsWith($post->image_url, ['http://', 'https://']);
@@ -109,13 +145,17 @@ class BlogController extends Controller
             }
         }
 
+        // Unduh dari remote jika belum tersimpan lokal
         if (!file_exists($filePath) && $remoteUrl) {
             $dir = dirname($filePath);
             if (!is_dir($dir)) {
                 @mkdir($dir, 0755, true);
             }
             $downloaded = @file_get_contents($remoteUrl, false, stream_context_create([
-                'http' => ['timeout' => 5],
+                'http' => [
+                    'timeout' => 4,
+                    'header'  => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\nAccept: image/*,*/*;q=0.8\r\n",
+                ],
                 'ssl'  => ['verify_peer' => false, 'verify_peer_name' => false],
             ]));
             if ($downloaded) {
@@ -124,67 +164,63 @@ class BlogController extends Controller
         }
 
         if (!file_exists($filePath)) {
-            $fallback = public_path('favicon.ico');
-            if (file_exists($fallback)) {
-                return response()->file($fallback, [
-                    'Content-Type' => 'image/x-icon',
-                    'Access-Control-Allow-Origin' => '*',
-                ]);
-            }
-            abort(404);
+            return null;
         }
 
-        // Cache direktori untuk gambar OG terkompresi
-        $cacheDir = storage_path('app/public/og-cache');
-        if (!is_dir($cacheDir)) {
-            @mkdir($cacheDir, 0755, true);
-        }
-
+        // Buat file kompresi khusus WhatsApp (target: 1200x630 atau proporsional, kualitas 82, size < 250KB)
         $cachedFile = $cacheDir . '/' . md5($post->slug . '_' . filemtime($filePath)) . '.jpg';
 
-        if (!file_exists($cachedFile)) {
-            $imgInfo = @getimagesize($filePath);
-            if ($imgInfo && extension_loaded('gd')) {
-                $srcImg = match ($imgInfo[2]) {
-                    IMAGETYPE_JPEG => @imagecreatefromjpeg($filePath),
-                    IMAGETYPE_PNG => @imagecreatefrompng($filePath),
-                    IMAGETYPE_WEBP => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($filePath) : null,
-                    default => null,
-                };
+        if (file_exists($cachedFile)) {
+            return $cachedFile;
+        }
 
-                if ($srcImg) {
-                    $origWidth = imagesx($srcImg);
-                    $origHeight = imagesy($srcImg);
+        $imgInfo = @getimagesize($filePath);
+        if ($imgInfo && extension_loaded('gd')) {
+            $srcImg = match ($imgInfo[2]) {
+                IMAGETYPE_JPEG => @imagecreatefromjpeg($filePath),
+                IMAGETYPE_PNG  => @imagecreatefrompng($filePath),
+                IMAGETYPE_WEBP => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($filePath) : null,
+                default        => null,
+            };
 
-                    $targetWidth = min(1200, $origWidth);
-                    $targetHeight = (int) round(($origHeight / $origWidth) * $targetWidth);
+            if ($srcImg) {
+                $origWidth  = imagesx($srcImg);
+                $origHeight = imagesy($srcImg);
 
-                    $destImg = imagecreatetruecolor($targetWidth, $targetHeight);
+                // Standar emas Facebook / WhatsApp: 1200x630
+                $targetWidth  = min(1200, max(400, $origWidth));
+                $targetHeight = (int) round(($origHeight / $origWidth) * $targetWidth);
 
-                    // Beri latar belakang putih untuk PNG transparan
-                    $white = imagecolorallocate($destImg, 255, 255, 255);
-                    imagefilledrectangle($destImg, 0, 0, $targetWidth, $targetHeight, $white);
+                $destImg = imagecreatetruecolor($targetWidth, $targetHeight);
 
-                    imagecopyresampled($destImg, $srcImg, 0, 0, 0, 0, $targetWidth, $targetHeight, $origWidth, $origHeight);
+                // Latar belakang putih untuk PNG transparan
+                $white = imagecolorallocate($destImg, 255, 255, 255);
+                imagefilledrectangle($destImg, 0, 0, $targetWidth, $targetHeight, $white);
 
-                    // Simpan sebagai JPEG kualitas 82 (ukuran stabil 70KB - 160KB, ramah WhatsApp)
-                    imagejpeg($destImg, $cachedFile, 82);
+                imagecopyresampled($destImg, $srcImg, 0, 0, 0, 0, $targetWidth, $targetHeight, $origWidth, $origHeight);
 
-                    imagedestroy($srcImg);
-                    imagedestroy($destImg);
-                }
+                // Simpan sebagai JPEG kualitas 82 (ukuran stabil 60KB - 180KB, ramah WhatsApp crawler)
+                imagejpeg($destImg, $cachedFile, 82);
+
+                imagedestroy($srcImg);
+                imagedestroy($destImg);
+
+                return $cachedFile;
             }
         }
 
-        $serveFile = file_exists($cachedFile) ? $cachedFile : $filePath;
-        $mime = file_exists($cachedFile) ? 'image/jpeg' : (mime_content_type($serveFile) ?: 'image/jpeg');
+        return $filePath;
+    }
 
-        return response()->file($serveFile, [
-            'Content-Type'                => $mime,
-            'Content-Length'              => filesize($serveFile),
-            'Cache-Control'               => 'public, max-age=2592000, immutable',
-            'Access-Control-Allow-Origin' => '*',
-            'Accept-Ranges'               => 'bytes',
-        ]);
+    protected function serveFallbackIcon()
+    {
+        $fallback = public_path('favicon.ico');
+        if (file_exists($fallback)) {
+            return response()->file($fallback, [
+                'Content-Type' => 'image/x-icon',
+                'Access-Control-Allow-Origin' => '*',
+            ]);
+        }
+        abort(404);
     }
 }

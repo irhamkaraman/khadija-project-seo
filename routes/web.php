@@ -10,7 +10,12 @@ use App\Http\Controllers\AffiliateRedirectController;
 Route::get('/', [BlogController::class, 'home'])->name('home');
 Route::get('/ajax/ads', [BlogController::class, 'ajaxAds'])->name('ajax.ads');
 
-Route::get('/og-image/{slug}.jpg', [BlogController::class, 'ogImage'])->name('blog.og-image');
+Route::get('/og-image/{slug}.jpg', [BlogController::class, 'ogImage'])
+    ->name('blog.og-image')
+    ->withoutMiddleware([
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+    ]);
 
 Route::get('/file/{path}', function (string $path) {
     $filePath = storage_path('app/public/' . $path);
@@ -29,7 +34,11 @@ Route::get('/file/{path}', function (string $path) {
         'Access-Control-Allow-Origin' => '*',
         'Accept-Ranges'               => 'bytes',
     ]);
-})->where('path', '.*')->name('storage.serve');
+})->where('path', '.*')->name('storage.serve')
+  ->withoutMiddleware([
+      \Illuminate\Session\Middleware\StartSession::class,
+      \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+  ]);
 
 Route::prefix('blog')->group(function () {
     Route::get('/', [BlogController::class, 'index'])->name('blog.index');

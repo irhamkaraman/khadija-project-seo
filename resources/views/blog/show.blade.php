@@ -1,20 +1,28 @@
 @extends('blog.layout')
 
 @php
-    $seoTitle    = $post->title . ' | ' . config('app.name');
-    $seoDesc     = Str::limit(strip_tags($post->content), 155);
-    $seoUrl      = route('blog.show', $post->slug);
+    $isSecureScheme = request()->isSecure() || Str::startsWith(config('app.url'), 'https://');
+    $scheme         = $isSecureScheme ? 'https://' : 'http://';
+    $baseHost       = request()->getHttpHost();
+
+    $seoTitle       = $post->title . ' | ' . config('app.name');
+    $seoDesc        = Str::limit(strip_tags($post->content), 155);
+    $seoUrl         = $scheme . $baseHost . route('blog.show', $post->slug, false);
     
     if ($post->image_url) {
-        $seoImageAbs = route('blog.og-image', $post->slug);
+        $seoImageAbs = $scheme . $baseHost . route('blog.og-image', $post->slug, false);
+        
+        // Direct image fallback jika crawler butuh alternatif
+        if (Str::startsWith($post->image_url, ['http://', 'https://'])) {
+            $directImageFallback = $post->image_url;
+        } else {
+            $directImageFallback = $scheme . $baseHost . '/file/' . ltrim(preg_replace('#^(file/|storage/)#', '', $post->image_url), '/');
+        }
     } else {
-        $seoImageAbs = url('/favicon.ico');
+        $seoImageAbs = $scheme . $baseHost . '/favicon.ico';
+        $directImageFallback = null;
     }
 
-    // Pastikan selalu HTTPS di domain live (wajib bagi WhatsApp & Instagram)
-    if (Str::startsWith($seoImageAbs, 'http://') && !str_contains($seoImageAbs, 'localhost') && !str_contains($seoImageAbs, '127.0.0.1')) {
-        $seoImageAbs = 'https://' . Str::after($seoImageAbs, 'http://');
-    }
     $publishedAt = $post->created_at->toIso8601String();
     $modifiedAt  = $post->updated_at->toIso8601String();
     $catName     = $post->category->name ?? '';
@@ -28,15 +36,15 @@
             'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => $seoUrl],
             'headline'      => $post->title,
             'description'   => $seoDesc,
-            'image'         => $seoImageAbs,
+            'image'         => [$seoImageAbs, ...($directImageFallback && $directImageFallback !== $seoImageAbs ? [$directImageFallback] : [])],
             'datePublished' => $publishedAt,
             'dateModified'  => $modifiedAt,
-            'author'        => ['@type' => 'Organization', 'name' => config('app.name'), 'url' => config('app.url')],
+            'author'        => ['@type' => 'Organization', 'name' => config('app.name'), 'url' => $scheme . $baseHost],
             'publisher'     => [
                 '@type' => 'Organization',
                 'name'  => config('app.name'),
-                'url'   => config('app.url'),
-                'logo'  => ['@type' => 'ImageObject', 'url' => config('app.url') . '/favicon.ico'],
+                'url'   => $scheme . $baseHost,
+                'logo'  => ['@type' => 'ImageObject', 'url' => $scheme . $baseHost . '/favicon.ico'],
             ],
             'articleSection' => $catName,
             'inLanguage'     => 'id-ID',
@@ -45,8 +53,8 @@
             '@context' => 'https://schema.org',
             '@type'    => 'BreadcrumbList',
             'itemListElement' => [
-                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Beranda',  'item' => route('blog.index')],
-                ['@type' => 'ListItem', 'position' => 2, 'name' => $catName,   'item' => route('blog.category', $catSlug)],
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Beranda',  'item' => $scheme . $baseHost . route('home', [], false)],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => $catName,   'item' => $scheme . $baseHost . ($catSlug ? route('blog.category', $catSlug, false) : '')],
                 ['@type' => 'ListItem', 'position' => 3, 'name' => $post->title, 'item' => $seoUrl],
             ],
         ],
@@ -71,6 +79,13 @@
 @section('twitter_card', 'summary_large_image')
 @section('twitter_title', $post->title)
 @section('twitter_description', $seoDesc)
+
+@if(!empty($directImageFallback) && $directImageFallback !== $seoImageAbs)
+@section('extra_og_images')
+<meta property="og:image" content="{{ $directImageFallback }}">
+<meta property="og:image:secure_url" content="{{ $directImageFallback }}">
+@endsection
+@endif
 
 @section('article_meta')
 <meta property="article:published_time" content="{{ $publishedAt }}">
