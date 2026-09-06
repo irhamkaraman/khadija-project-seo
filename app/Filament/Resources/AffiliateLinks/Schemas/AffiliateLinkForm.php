@@ -63,6 +63,8 @@ class AffiliateLinkForm
 
                                     $metas = $dom->getElementsByTagName('meta');
                                     foreach ($metas as $meta) {
+                                        if (!$meta instanceof \DOMElement) continue;
+
                                         $property = strtolower($meta->getAttribute('property') ?: $meta->getAttribute('name'));
                                         $content = $meta->getAttribute('content');
                                         
