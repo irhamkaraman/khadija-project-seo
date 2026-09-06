@@ -64,13 +64,58 @@
 .cat-card:hover {
     transform: translateY(-4px) scale(1.02);
 }
+
+/* Affiliate card */
+.affiliate-card {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+.affiliate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.affiliate-card .badge-promo {
+    animation: pulse-badge 2s ease-in-out infinite;
+}
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.05); }
+}
+
+/* Scroll popup */
+#affiliate-popup {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+#affiliate-popup.hidden-popup {
+    transform: translateY(120%) scale(0.95);
+    opacity: 0;
+    pointer-events: none;
+}
+#affiliate-popup.visible-popup {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Sidebar popup desktop */
+#affiliate-sidebar {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+#affiliate-sidebar.hidden-sidebar {
+    transform: translateX(120%) scale(0.95);
+    opacity: 0;
+    pointer-events: none;
+}
+#affiliate-sidebar.visible-sidebar {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    pointer-events: all;
+}
 @endsection
 
 @section('content')
 
-{{-- ================================================================ --}}
-{{-- HERO SECTION --}}
-{{-- ================================================================ --}}
 <section class="relative px-4 sm:px-6 lg:px-8 pt-8 pb-16 lg:pb-24 overflow-hidden">
 
     {{-- Background gradient accent --}}
@@ -134,9 +179,6 @@
     </div>
 </section>
 
-{{-- ================================================================ --}}
-{{-- FEATURED POSTS SECTION --}}
-{{-- ================================================================ --}}
 @if($latestPosts->count() > 0)
 <section class="px-4 sm:px-6 lg:px-8 pb-16">
     <div class="max-w-6xl mx-auto">
@@ -266,9 +308,6 @@
 </section>
 @endif
 
-{{-- ================================================================ --}}
-{{-- LATEST ARTICLES GRID --}}
-{{-- ================================================================ --}}
 @if($morePosts->count() > 0)
 <section class="px-4 sm:px-6 lg:px-8 pb-16">
     <div class="max-w-6xl mx-auto">
@@ -407,6 +446,75 @@
 @endif
 
 {{-- ================================================================ --}}
+{{-- AFFILIATE ADS GRID SECTION --}}
+{{-- ================================================================ --}}
+@if($affiliates->count() > 0)
+<section class="px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-1 h-8 bg-gradient-to-b from-yellow-400 to-orange-500 rounded-full"></div>
+            <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-900">
+                Penawaran Spesial
+            </h2>
+            <span class="px-2.5 py-1 rounded-full bg-red-500/15 border border-red-500/30 text-red-500 text-xs font-bold uppercase tracking-wider animate-pulse">
+                HOT
+            </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            @foreach($affiliates as $ad)
+            <a href="{{ route('affiliate.go', $ad->slug) }}"
+               target="_blank" rel="noopener noreferrer"
+               class="affiliate-card group block rounded-2xl overflow-hidden dark:bg-urban-900/60 bg-white/80 dark:border dark:border-urban-800/40 border border-urban-200/60 shadow-md">
+
+                {{-- Gambar Produk --}}
+                <div class="relative h-44 overflow-hidden bg-gradient-to-br from-urban-800 to-urban-900">
+                    @if($ad->image_url)
+                        <img src="{{ $ad->image_url }}" alt="{{ $ad->title }}"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                             loading="lazy"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1 1%22><rect fill=%22%23353d54%22/></svg>';">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center">
+                            <svg class="w-12 h-12 dark:text-urban-600 text-urban-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                            </svg>
+                        </div>
+                    @endif
+
+                    {{-- Badge promo --}}
+                    @if($ad->badge)
+                    <span class="badge-promo absolute top-2 left-2 px-2 py-0.5 rounded-full bg-red-500 text-white text-xs font-bold uppercase shadow">
+                        {{ $ad->badge }}
+                    </span>
+                    @endif
+
+                    {{-- Overlay gradient --}}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+
+                {{-- Info --}}
+                <div class="p-3">
+                    <h3 class="text-xs font-semibold dark:text-urban-200 text-urban-800 line-clamp-2 leading-snug mb-2 group-hover:text-forest-600 dark:group-hover:text-forest-300 transition-colors">
+                        {{ $ad->title }}
+                    </h3>
+                    <span class="inline-flex items-center gap-1 px-3 py-1.5 w-full justify-center rounded-lg bg-orange-500 hover:bg-orange-400 text-white text-xs font-bold transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        {{ $ad->cta_text }}
+                    </span>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+@endif
+
+{{-- ================================================================ --}}
 {{-- CTA SECTION --}}
 {{-- ================================================================ --}}
 <section class="px-4 sm:px-6 lg:px-8 pb-20">
@@ -446,4 +554,132 @@
     </div>
 </section>
 
+{{-- ================================================================ --}}
+{{-- SCROLL-TRIGGERED AFFILIATE POPUP (Mobile Bottom Bar) --}}
+{{-- ================================================================ --}}
+@if($popupAffiliate)
+{{-- Mobile: Bottom Bar --}}
+<div id="affiliate-popup" class="hidden-popup fixed bottom-0 left-0 right-0 z-50 md:hidden px-3 pb-3">
+    <div class="dark:bg-urban-900 bg-white rounded-2xl border dark:border-urban-700 border-urban-200 shadow-2xl p-3 flex items-center gap-3">
+        {{-- Gambar --}}
+        @if($popupAffiliate->image_url)
+        <img src="{{ $popupAffiliate->image_url }}" alt="{{ $popupAffiliate->title }}"
+             class="w-16 h-16 object-cover rounded-xl flex-shrink-0">
+        @endif
+        {{-- Info --}}
+        <div class="flex-1 min-w-0">
+            @if($popupAffiliate->badge)
+            <span class="inline-block px-2 py-0.5 rounded-full bg-red-500 text-white text-xs font-bold mb-1">{{ $popupAffiliate->badge }}</span>
+            @endif
+            <p class="text-xs font-semibold dark:text-white text-urban-900 line-clamp-2 leading-snug">{{ $popupAffiliate->title }}</p>
+        </div>
+        {{-- CTA --}}
+        <a href="{{ route('affiliate.go', $popupAffiliate->slug) }}"
+           target="_blank" rel="noopener noreferrer"
+           class="flex-shrink-0 px-4 py-2.5 bg-orange-500 hover:bg-orange-400 text-white text-xs font-bold rounded-xl transition-all whitespace-nowrap">
+            {{ $popupAffiliate->cta_text }}
+        </a>
+        {{-- Tutup --}}
+        <button id="popup-close" class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full dark:bg-urban-800 bg-urban-100 dark:text-urban-400 text-urban-500 hover:text-red-500 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+{{-- Desktop: Sidebar Floating Kanan --}}
+<div id="affiliate-sidebar" class="hidden-sidebar fixed bottom-6 right-4 z-50 hidden md:block w-64">
+    <div class="dark:bg-urban-900 bg-white rounded-2xl border dark:border-urban-700 border-urban-200 shadow-2xl overflow-hidden">
+        {{-- Gambar produk besar --}}
+        @if($popupAffiliate->image_url)
+        <div class="relative h-36 overflow-hidden">
+            <img src="{{ $popupAffiliate->image_url }}" alt="{{ $popupAffiliate->title }}"
+                 class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            @if($popupAffiliate->badge)
+            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-red-500 text-white text-xs font-bold">{{ $popupAffiliate->badge }}</span>
+            @endif
+            {{-- Tombol tutup --}}
+            <button id="sidebar-close" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        @endif
+        {{-- Info --}}
+        <div class="p-3">
+            <p class="text-xs font-semibold dark:text-white text-urban-900 line-clamp-2 mb-2">{{ $popupAffiliate->title }}</p>
+            @if($popupAffiliate->description)
+            <p class="text-xs dark:text-urban-400 text-urban-500 line-clamp-2 mb-3">{{ Str::limit(strip_tags($popupAffiliate->description), 80) }}</p>
+            @endif
+            <a href="{{ route('affiliate.go', $popupAffiliate->slug) }}"
+               target="_blank" rel="noopener noreferrer"
+               class="block w-full text-center px-4 py-2 bg-orange-500 hover:bg-orange-400 text-white text-xs font-bold rounded-xl transition-all">
+                {{ $popupAffiliate->cta_text }}
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
+@endsection
+
+@section('scripts')
+@if($popupAffiliate)
+<script>
+(function() {
+    var popup        = document.getElementById('affiliate-popup');
+    var sidebar      = document.getElementById('affiliate-sidebar');
+    var popupClose   = document.getElementById('popup-close');
+    var sidebarClose = document.getElementById('sidebar-close');
+
+    // Gunakan sessionStorage agar tidak muncul terus-menerus setiap refresh
+    var sessionKey = 'affiliate_popup_shown';
+    if (sessionStorage.getItem(sessionKey)) return;
+
+    var shown = false;
+
+    function showPopups() {
+        if (shown) return;
+        shown = true;
+        sessionStorage.setItem(sessionKey, '1');
+
+        // Mobile bottom bar
+        if (popup) {
+            popup.classList.remove('hidden-popup');
+            popup.classList.add('visible-popup');
+            // Auto tutup setelah 10 detik
+            setTimeout(function() { hidePopup(); }, 10000);
+        }
+
+        // Desktop sidebar floating
+        if (sidebar) {
+            sidebar.classList.remove('hidden-sidebar');
+            sidebar.classList.add('visible-sidebar');
+        }
+    }
+
+    function hidePopup()   { if (popup)   { popup.classList.remove('visible-popup');   popup.classList.add('hidden-popup');   } }
+    function hideSidebar() { if (sidebar) { sidebar.classList.remove('visible-sidebar'); sidebar.classList.add('hidden-sidebar'); } }
+
+    if (popupClose)   popupClose.addEventListener('click',   hidePopup);
+    if (sidebarClose) sidebarClose.addEventListener('click', hideSidebar);
+
+    // Trigger saat scroll > 40% halaman
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+        if (ticking || shown) return;
+        ticking = true;
+        requestAnimationFrame(function() {
+            var total   = document.documentElement.scrollHeight - window.innerHeight;
+            var scrolled = total > 0 ? window.scrollY / total : 0;
+            if (scrolled >= 0.40) showPopups();
+            ticking = false;
+        });
+    }, { passive: true });
+})();
+</script>
+@endif
 @endsection

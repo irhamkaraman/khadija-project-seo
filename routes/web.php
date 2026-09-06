@@ -28,5 +28,25 @@ Route::prefix('blog')->group(function () {
     Route::get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
 });
 
-Route::get('/{slug}', SiteRedirectController::class);
+/**
+ * ============================================================
+ * AFFILIATE LINK TRACKER — /go/{slug}
+ * ============================================================
+ * Route ini mencatat klik iklan afiliasi secara atomic
+ * lalu meredirect pengunjung ke affiliate_url.
+ * Dipisah dari /{slug} agar tidak bentrok dengan rute Safelink.
+ * ============================================================
+ */
+Route::get('/go/{slug}', function (string $slug) {
+    $affiliate = \App\Models\AffiliateLink::where('slug', $slug)
+        ->where('is_active', true)
+        ->firstOrFail();
 
+    // Atomic increment — aman dari race condition di concurrent requests
+    $affiliate->incrementClick();
+
+    // Redirect langsung ke link afiliasi (Shopee, Tokped, dll)
+    return redirect()->away($affiliate->affiliate_url);
+})->name('affiliate.go');
+
+Route::get('/{slug}', SiteRedirectController::class);

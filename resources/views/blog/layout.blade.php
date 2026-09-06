@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    {{-- ====== ANTI-FOUC: Terapkan tema SEBELUM browser merender apapun ====== --}}
     <script>
         (function() {
             const stored = localStorage.getItem('theme');
@@ -16,7 +15,7 @@
                 document.documentElement.classList.remove('dark');
             }
         })();
-    <\/script>
+    </script>
 
     {{-- ====== PRIMARY SEO ====== --}}
     @php
