@@ -183,7 +183,6 @@
 
 {{-- Safelink Overlay --}}
 @if($randomShareLink)
-{{-- overlay: hapus target="_blank" — navigasi akan dikontrol JS sesuai device --}}
 <div class="safelink-overlay" id="safelinkOverlay" data-href="{{ $randomShareLink }}"></div>
 @endif
 
@@ -207,33 +206,58 @@
     @if($randomShareLink)
     (function() {
         var overlay = document.getElementById('safelinkOverlay');
-        if (!overlay) return;
-
-        var triggered = false;
-        var affiliateUrl = overlay.getAttribute('data-href');
-
-        // Deteksi mobile berdasarkan touch support & user agent
-        var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
-                       /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-
-        function openAffiliate() {
-            if (triggered) return;
-            triggered = true;
-
-            if (isMobile) {
-                // Mobile: same-tab navigation → OS App Intent (Shopee/TikTok terinstall
-                // akan diintersep OS sebelum browser pindah halaman)
-                window.location.href = affiliateUrl;
-            } else {
-                // Desktop: buka tab baru agar artikel tetap terbuka
-                window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+        var lastOpened = sessionStorage.getItem('affiliate_auto_opened_time');
+        var now = Date.now();
+        
+        // Jika sudah dibuka dalam 10 detik terakhir, hapus overlay (jangan aktif dulu)
+        if (lastOpened && (now - parseInt(lastOpened)) < 10000) {
+            if (overlay && overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
             }
-
-            // Hapus overlay agar user bisa bebas scroll artikel
+            // Pasang timer untuk mengaktifkan kembali jika user masih stay di halaman
             setTimeout(function() {
-                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-            }, 300);
+                if (overlay && !document.getElementById('safelinkOverlay')) {
+                    document.body.appendChild(overlay);
+                    triggered = false;
+                }
+            }, 10000 - (now - parseInt(lastOpened)));
         }
+
+        if (overlay) {
+            var triggered = false;
+            var affiliateUrl = overlay.getAttribute('data-href');
+
+            // Deteksi mobile berdasarkan touch support & user agent
+            var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+                           /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+            function openAffiliate() {
+                if (triggered) return;
+                triggered = true;
+                
+                sessionStorage.setItem('affiliate_auto_opened_time', Date.now().toString());
+
+                if (isMobile) {
+                    // Mobile: same-tab navigation → OS App Intent (Shopee/TikTok terinstall
+                    // akan diintersep OS sebelum browser pindah halaman)
+                    window.location.href = affiliateUrl;
+                } else {
+                    // Desktop: buka tab baru agar artikel tetap terbuka
+                    window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+                }
+
+                // Hapus overlay sementara, lalu aktifkan kembali setelah 10 detik
+                setTimeout(function() {
+                    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                    
+                    setTimeout(function() {
+                        triggered = false;
+                        if (!document.getElementById('safelinkOverlay')) {
+                            document.body.appendChild(overlay);
+                        }
+                    }, 10000);
+                }, 300);
+            }
 
         // Desktop: event click biasa
         overlay.addEventListener('click', function(e) {
@@ -256,7 +280,7 @@
             e.preventDefault();    // cegah ghost click 300ms
             openAffiliate();
         }, { passive: false });
-
+        }
     })();
     @endif
 </script>

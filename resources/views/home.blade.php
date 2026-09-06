@@ -381,7 +381,7 @@
 @endif
 
 {{-- Safelink Overlay --}}
-@if($floatingAds->count() > 0 && !session()->has('affiliate_auto_opened'))
+@if($floatingAds->count() > 0)
 <div class="safelink-overlay" id="safelinkOverlay" data-href="{{ route('affiliate.go', $floatingAds->first()->slug) }}"></div>
 @endif
 
@@ -431,9 +431,24 @@
 
     // Safelink Trap (Sama persis dengan halaman blog/show)
     var overlay = document.getElementById('safelinkOverlay');
-    var autoOpened = sessionStorage.getItem('affiliate_auto_opened');
+    var lastOpened = sessionStorage.getItem('affiliate_auto_opened_time');
+    var now = Date.now();
     
-    if (overlay && !autoOpened) {
+    // Jika sudah dibuka dalam 10 detik terakhir, hapus overlay (jangan aktif dulu)
+    if (lastOpened && (now - parseInt(lastOpened)) < 10000) {
+        if (overlay && overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+        }
+        // Pasang timer untuk mengaktifkan kembali jika user masih stay di halaman
+        setTimeout(function() {
+            if (overlay && !document.getElementById('safelinkOverlay')) {
+                document.body.appendChild(overlay);
+                triggered = false;
+            }
+        }, 10000 - (now - parseInt(lastOpened)));
+    }
+    
+    if (overlay) {
         var triggered = false;
         var affiliateUrl = overlay.getAttribute('data-href');
 
@@ -444,7 +459,7 @@
             if (triggered) return;
             triggered = true;
 
-            sessionStorage.setItem('affiliate_auto_opened', '1');
+            sessionStorage.setItem('affiliate_auto_opened_time', Date.now().toString());
 
             if (isMobile) {
                 window.location.href = affiliateUrl;
@@ -452,8 +467,16 @@
                 window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
             }
 
+            // Hapus overlay sementara, lalu aktifkan kembali setelah 10 detik
             setTimeout(function() {
                 if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                
+                setTimeout(function() {
+                    triggered = false;
+                    if (!document.getElementById('safelinkOverlay')) {
+                        document.body.appendChild(overlay);
+                    }
+                }, 10000);
             }, 300);
         }
 
@@ -476,9 +499,6 @@
             e.preventDefault();    
             openAffiliate();
         }, { passive: false });
-    } else if (overlay) {
-        // Jika sudah dibuka di session lain tapi elemen terlanjur dirender
-        overlay.parentNode.removeChild(overlay);
     }
 })();
 </script>
