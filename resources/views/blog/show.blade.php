@@ -236,6 +236,13 @@
     </div>
 
     {{-- REKOMENDASI BACAAN --}}
+    @php
+        $formatViews = function($number) {
+            if ($number >= 1000000) return round($number / 1000000, 1) . 'jt';
+            if ($number >= 1000) return round($number / 1000, 1) . 'rb';
+            return $number;
+        };
+    @endphp
     <div class="max-w-6xl mx-auto mt-20 pt-12 border-t dark:border-urban-800/60 border-urban-200">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
             
@@ -256,7 +263,7 @@
                             <p class="text-[11px] font-medium dark:text-urban-500 text-urban-500 mt-1.5 flex items-center gap-1.5">
                                 <span>{{ $rp->created_at->translatedFormat('d M Y') }}</span>
                                 <span class="w-1 h-1 rounded-full bg-urban-300 dark:bg-urban-600"></span>
-                                <span class="text-red-600 dark:text-red-400 font-semibold">{{ number_format($rp->views) }}x dibaca</span>
+                                <span class="text-red-600 dark:text-red-400 font-semibold">{{ $formatViews($rp->views) }}x dibaca</span>
                             </p>
                         </div>
                     </a>

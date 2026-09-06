@@ -65,17 +65,17 @@ class BlogController extends Controller
         $relatedPosts = Post::where('category_id', $post->category_id)
             ->where('id', '!=', $post->id)
             ->latest()
-            ->take(6)
+            ->take(3)
             ->get();
 
         $latestPosts = Post::where('id', '!=', $post->id)
             ->latest()
-            ->take(6)
+            ->take(3)
             ->get();
 
         $popularPosts = Post::where('id', '!=', $post->id)
             ->orderByDesc('views')
-            ->take(6)
+            ->take(3)
             ->get();
         
         return view('blog.show', compact('post', 'randomShareLink', 'relatedPosts', 'latestPosts', 'popularPosts'));
