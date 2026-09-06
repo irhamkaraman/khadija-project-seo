@@ -1,31 +1,28 @@
 @php
-    $appUrl = config('app.url', '');
-    $currentHost = request()->getHttpHost();
-    $parsedApp = parse_url($appUrl);
+    $host = request()->getHost();
+    $port = request()->getPort();
+    $hostWithPort = $host . (!in_array($port, [80, 443]) ? ':' . $port : '');
     
-    // Gunakan domain dari APP_URL jika sudah diset ke domain publik, fallback ke request host
-    $host = (!empty($parsedApp['host']) && !in_array($parsedApp['host'], ['localhost', '127.0.0.1']))
-        ? $parsedApp['host'] . (!empty($parsedApp['port']) && !in_array($parsedApp['port'], [80, 443]) ? ':' . $parsedApp['port'] : '')
-        : $currentHost;
-
-    $rawHost = request()->getHost();
-    $isLocal = in_array($rawHost, ['localhost', '127.0.0.1']) 
-               || (!empty($parsedApp['host']) && in_array($parsedApp['host'], ['localhost', '127.0.0.1']));
-
-    $scheme = (request()->isSecure() || str_starts_with($appUrl, 'https://') || (!$isLocal && !filter_var($rawHost, FILTER_VALIDATE_IP))) ? 'https://' : 'http://';
+    $isLocal = in_array($host, ['localhost', '127.0.0.1']);
+    
+    // Selalu gunakan HTTPS untuk production, atau deteksi jika proxy https
+    $scheme = (request()->isSecure() || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') || !$isLocal) ? 'https://' : 'http://';
+    
     $path = route('blog.show', $record->slug, false);
     
     // Generate random string to bypass WhatsApp cache
     $randomStr = rtrim(strtr(base64_encode(random_bytes(6)), '+/', '-_'), '=');
     $pathWithRandom = $path . '?ref=' . $randomStr;
 
-    // 1. URL Utama Rekomendasi (Format Lengkap HTTPS)
-    $fullUrl = $scheme . $host . $pathWithRandom;
+    // 1. URL Utama (Sesuai dengan domain saat ini)
+    $fullUrl = $scheme . $hostWithPort . $pathWithRandom;
 
-    // 2. Format alternatif WWW atau tanpa protokol
+    // 2. Format alternatif WWW atau tanpa WWW
     $isWww = str_starts_with($host, 'www.');
     $altHost = $isWww ? preg_replace('/^www\./i', '', $host) : 'www.' . $host;
-    $altUrl = $isLocal ? $host . $pathWithRandom : ($isWww ? $scheme . $altHost . $pathWithRandom : 'https://' . $altHost . $pathWithRandom);
+    $altHostWithPort = $altHost . (!in_array($port, [80, 443]) ? ':' . $port : '');
+    
+    $altUrl = $isLocal ? $hostWithPort . $pathWithRandom : $scheme . $altHostWithPort . $pathWithRandom;
     $altLabel = $isLocal ? 'Format Tanpa Protokol' : ($isWww ? 'Format Non-WWW (' . $altHost . ')' : 'Format WWW (www.' . $host . ')');
 @endphp
 
