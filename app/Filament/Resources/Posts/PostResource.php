@@ -22,7 +22,13 @@ class PostResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Blog';
 
-    protected static ?string $recordTitleAttribute = 'Post';
+    protected static ?string $navigationLabel = 'Postingan';
+
+    protected static ?string $modelLabel = 'Postingan';
+
+    protected static ?string $pluralModelLabel = 'Postingan';
+
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema
     {

@@ -22,7 +22,13 @@ class CategoryResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Blog';
 
-    protected static ?string $recordTitleAttribute = 'Post';
+    protected static ?string $navigationLabel = 'Kategori';
+
+    protected static ?string $modelLabel = 'Kategori';
+
+    protected static ?string $pluralModelLabel = 'Kategori';
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
     {

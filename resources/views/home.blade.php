@@ -67,39 +67,51 @@
             {{-- Featured Large Card --}}
             <a href="{{ route('blog.show', $featured->slug) }}"
                class="post-card group relative lg:col-span-3 block rounded-3xl overflow-hidden shadow-2xl shadow-black/30"
-               style="min-height: 420px;">
+               style="min-height: 420px; position: relative;">
 
                 @if($featured->image_url)
                     <img src="{{ url('/file/' . $featured->image_url) }}"
                          alt="{{ $featured->title }}"
-                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                         style="z-index: 1;">
                 @else
-                    <div class="absolute inset-0 bg-gradient-to-br from-forest-800 to-urban-900"></div>
+                    <div class="absolute inset-0 bg-gradient-to-br from-forest-800 to-urban-900" style="z-index: 1;"></div>
                 @endif
 
-                {{-- Overlay --}}
-                <div class="featured-overlay absolute inset-0"></div>
+                {{-- Overlay Gradasi Gelap Penuh di atas gambar --}}
+                <div class="absolute inset-0 pointer-events-none"
+                     style="background: linear-gradient(to top, rgba(10, 13, 20, 0.95) 0%, rgba(10, 13, 20, 0.45) 50%, rgba(10, 13, 20, 0.15) 100%); z-index: 2;"></div>
 
-                {{-- Content --}}
-                <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+                {{-- Content dengan Gradasi Kuat di Area Bawah --}}
+                <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8"
+                     style="background: linear-gradient(to top, rgba(10, 13, 20, 0.98) 0%, rgba(10, 13, 20, 0.9) 45%, rgba(10, 13, 20, 0.6) 75%, transparent 100%); padding-top: 6rem; z-index: 3;">
+                    
                     <div class="flex items-center gap-2 mb-3 flex-wrap">
-                        <span class="px-3 py-1 rounded-full bg-forest-600/90 text-forest-100 text-xs font-semibold uppercase tracking-wider">
+                        <span class="px-3 py-1 rounded-full text-white text-xs font-semibold uppercase tracking-wider shadow-md"
+                              style="background-color: #1e6b24;">
                             {{ $featured->category->name ?? 'Artikel' }}
                         </span>
-                        <span class="text-urban-400 text-xs flex items-center gap-1">
+                        <span class="text-xs flex items-center gap-1 font-medium"
+                              style="color: #cbd5e1; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                             {{ $featured->created_at->translatedFormat('d F Y') }}
                         </span>
                     </div>
-                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-3 leading-snug group-hover:text-forest-200 transition-colors line-clamp-3">
+
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold mb-3 leading-snug group-hover:text-forest-200 transition-colors line-clamp-3"
+                        style="color: #ffffff; text-shadow: 0 2px 6px rgba(0,0,0,0.9);">
                         {{ $featured->title }}
                     </h2>
-                    <p class="text-urban-300 text-sm line-clamp-2 mb-4">
+
+                    <p class="text-sm line-clamp-2 mb-4"
+                       style="color: #e2e8f0; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
                         {{ Str::limit(strip_tags($featured->content), 140) }}
                     </p>
-                    <div class="inline-flex items-center gap-2 text-sm font-semibold text-forest-400 group-hover:text-forest-300 transition-colors">
+
+                    <div class="inline-flex items-center gap-2 text-sm font-semibold group-hover:text-forest-200 transition-colors"
+                         style="color: #86c489; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
                         Baca Selengkapnya
                         <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>

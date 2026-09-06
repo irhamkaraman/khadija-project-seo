@@ -39,11 +39,12 @@ class SitesTable
                     ->color('success')
                     ->url(fn (\App\Models\Site $record): string => url('/' . $record->slug))
                     ->openUrlInNewTab(),
-                EditAction::make(),
+                EditAction::make()->label('Ubah'),
+                \Filament\Actions\DeleteAction::make()->label('Hapus'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()->label('Hapus yang dipilih'),
                 ]),
             ]);
     }

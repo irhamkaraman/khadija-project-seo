@@ -64,11 +64,12 @@ class AffiliateLinksTable
                     ->falseLabel('Nonaktif'),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->label('Ubah'),
+                \Filament\Actions\DeleteAction::make()->label('Hapus'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()->label('Hapus yang dipilih'),
                 ]),
             ]);
     }

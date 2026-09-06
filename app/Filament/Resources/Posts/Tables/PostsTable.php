@@ -47,18 +47,30 @@ class PostsTable
                 //
             ])
             ->recordActions([
+                \Filament\Actions\Action::make('copy_link')
+                    ->label('Salin Link')
+                    ->icon('heroicon-o-clipboard-document-check')
+                    ->color('warning')
+                    ->modalHeading('Salin Link Postingan')
+                    ->modalDescription('Pilih format tautan yang ingin Anda salin:')
+                    ->modalWidth('lg')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup')
+                    ->modalContent(fn (Post $record) => view('filament.actions.copy-post-link', [
+                        'record' => $record,
+                    ])),
                 \Filament\Actions\Action::make('visit')
                     ->label('Kunjungi')
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->color('info')
                     ->url(fn (Post $record): string => route('blog.show', $record->slug))
                     ->openUrlInNewTab(),
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()->label('Ubah'),
+                DeleteAction::make()->label('Hapus'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()->label('Hapus yang dipilih'),
                 ]),
             ]);
     }
