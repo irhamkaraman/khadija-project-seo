@@ -32,6 +32,17 @@ class AffiliateLink extends Model
     public function incrementClick(): void
     {
         $this->increment('click_count');
+        
+        $log = \App\Models\ClickLog::firstOrCreate(
+            ['affiliate_link_id' => $this->id, 'clicked_date' => now()->toDateString()],
+            ['clicks' => 0]
+        );
+        $log->increment('clicks');
+    }
+
+    public function clickLogs()
+    {
+        return $this->hasMany(ClickLog::class);
     }
 
     /**

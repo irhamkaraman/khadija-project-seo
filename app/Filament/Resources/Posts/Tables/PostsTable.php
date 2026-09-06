@@ -72,6 +72,7 @@ class PostsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make()->label('Hapus yang dipilih'),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 }

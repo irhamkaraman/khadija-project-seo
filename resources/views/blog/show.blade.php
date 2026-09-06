@@ -10,14 +10,8 @@
     $seoUrl         = $scheme . $baseHost . route('blog.show', $post->slug, false);
     
     if ($post->image_url) {
-        $seoImageAbs = $scheme . $baseHost . route('blog.og-image', $post->slug, false);
-        
-        // Direct image fallback jika crawler butuh alternatif
-        if (Str::startsWith($post->image_url, ['http://', 'https://'])) {
-            $directImageFallback = $post->image_url;
-        } else {
-            $directImageFallback = $scheme . $baseHost . '/storage/' . ltrim(preg_replace('#^(file/|storage/)#', '', $post->image_url), '/');
-        }
+        $seoImageAbs = $post->asset_url;
+        $directImageFallback = $post->asset_url;
     } else {
         $seoImageAbs = $scheme . $baseHost . '/favicon.ico';
         $directImageFallback = null;

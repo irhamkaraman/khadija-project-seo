@@ -63,7 +63,7 @@ class BlogController extends Controller
 
     public function ajaxAds(Request $request)
     {
-        $limit = $request->get('limit', 5);
+        $limit = $request->input('limit', 5);
         $ads = AffiliateLink::active()
             ->whereNotNull('image_url')
             ->inRandomOrder()

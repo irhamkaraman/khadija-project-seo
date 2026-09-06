@@ -626,7 +626,7 @@
                                 adLink.addEventListener('click', navigateToAd);
                             }
                         }
-                    }, 20000);
+                    }, 10000);
                 })
                 .catch(err => console.error('Error fetching ads:', err));
         });
