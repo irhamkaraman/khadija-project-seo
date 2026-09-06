@@ -460,13 +460,18 @@
 
                     var placeholders = document.querySelectorAll('.ajax-ad-slot');
                     placeholders.forEach((el, index) => {
-                        var adIndex = index % ads.length; 
-                        var ad = ads[adIndex];
+                        // Jangan duplikat iklan jika data iklan lebih sedikit dari slot placeholder
+                        if (index >= ads.length) {
+                            el.innerHTML = '';
+                            el.style.display = 'none';
+                            return;
+                        }
+                        var ad = ads[index];
                         el.innerHTML = `
-                            <div class="my-6 text-center border-y border-gray-300 dark:border-gray-800 py-4 bg-gray-50 dark:bg-urban-900">
-                                <span class="block text-[10px] text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
-                                <a href="${ad.go_url}" target="_blank" rel="noopener noreferrer" class="inline-block relative">
-                                    <img src="${ad.image_url}" alt="${ad.title}" class="max-w-full h-auto mx-auto object-contain max-h-[250px] shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div class="my-6 text-center">
+                                <span class="block text-[10px] text-gray-400 dark:text-urban-500 uppercase tracking-widest mb-1.5 font-sans">Advertisement</span>
+                                <a href="${ad.go_url}" target="_blank" rel="noopener noreferrer" class="inline-block">
+                                    <img src="${ad.image_url}" alt="${ad.title}" class="max-w-full h-auto mx-auto object-contain max-h-[280px]">
                                 </a>
                             </div>
                         `;

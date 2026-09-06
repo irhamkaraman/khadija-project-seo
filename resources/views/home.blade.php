@@ -249,14 +249,12 @@
             </a>
         </div>
 
+        {{-- Slot Iklan 2: Di bawah Artikel Terbaru --}}
+        <div class="ajax-ad-slot mt-10"></div>
+
     </div>
 </section>
 @endif
-
-{{-- Placeholder Iklan Klasik AJAX --}}
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="ajax-ad-slot"></div>
-</div>
 
 {{-- ================================================================ --}}
 {{-- CATEGORIES SECTION --}}
@@ -313,6 +311,11 @@
 
     </div>
 </section>
+
+{{-- Slot Iklan 3: Di bawah Kategori --}}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="ajax-ad-slot"></div>
+</div>
 @endif
 
 
@@ -356,6 +359,11 @@
         </div>
     </div>
 </section>
+
+{{-- Slot Iklan 4: Di bawah CTA / Sebelum Footer --}}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="ajax-ad-slot"></div>
+</div>
 
 {{-- ================================================================ --}}
 {{-- FLOATING AFFILIATE ADS (2 Ads Bottom Bar) --}}
