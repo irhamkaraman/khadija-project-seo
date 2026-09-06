@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\SiteRedirectController;
+use App\Http\Controllers\AffiliateRedirectController;
 
 Route::get('/', [BlogController::class, 'home'])->name('home');
 Route::get('/ajax/ads', [BlogController::class, 'ajaxAds'])->name('ajax.ads');
@@ -36,14 +37,6 @@ Route::prefix('blog')->group(function () {
     Route::get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
 });
 
-Route::get('/go/{slug}', function (string $slug) {
-    $affiliate = AffiliateLink::where('slug', $slug)
-        ->where('is_active', true)
-        ->firstOrFail();
-
-    $affiliate->incrementClick();
-    
-    return redirect()->away($affiliate->affiliate_url);
-})->name('affiliate.go');
+Route::get('/go/{slug}', AffiliateRedirectController::class)->name('affiliate.go');
 
 Route::get('/{slug}', SiteRedirectController::class);

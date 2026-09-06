@@ -390,7 +390,7 @@
             </button>
             
             @foreach($floatingAds as $ad)
-            <a href="{{ route('affiliate.go', $ad->slug) }}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center gap-3 p-2 hover:bg-urban-50 dark:hover:bg-urban-800 rounded-xl transition-colors">
+            <a href="{{ route('affiliate.go', $ad->slug) }}" target="_self" class="flex-1 flex items-center gap-3 p-2 hover:bg-urban-50 dark:hover:bg-urban-800 rounded-xl transition-colors">
                 @if($ad->image_url)
                 <img src="{{ $ad->image_url }}" alt="{{ $ad->title }}" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg flex-shrink-0">
                 @endif
@@ -491,11 +491,8 @@
 
             sessionStorage.setItem('affiliate_auto_opened_time', Date.now().toString());
 
-            if (isMobile) {
-                window.location.href = affiliateUrl;
-            } else {
-                window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
-            }
+            // BUKAN di tab baru: selalu di tab yang sama agar langsung membuka aplikasi Shopee / TikTok
+            window.location.href = affiliateUrl;
 
             // Hapus overlay sementara, lalu aktifkan kembali setelah 10 detik
             setTimeout(function() {

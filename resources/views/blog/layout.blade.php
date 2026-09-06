@@ -486,34 +486,44 @@
                         el.innerHTML = `
                             <div class="my-6 text-center">
                                 <span class="block text-[10px] text-gray-400 dark:text-urban-500 uppercase tracking-widest mb-1.5 font-sans">Advertisement</span>
-                                <a href="${ad.go_url}" target="_blank" rel="noopener noreferrer" class="inline-block">
+                                <a href="${ad.go_url}" target="_self" class="inline-block">
                                     <img src="${ad.image_url}" alt="${ad.title}" class="max-w-full h-auto mx-auto object-contain max-h-[280px]">
                                 </a>
                             </div>
                         `;
                     });
 
-                    if (!modalShown && globalAdModal) {
-                        var randomAd = ads[Math.floor(Math.random() * ads.length)];
-                        globalAdContent.innerHTML = `<img src="${randomAd.image_url}" alt="Ad" class="w-full h-auto object-contain max-h-[70vh]">`;
-                        
-                        globalAdModal.style.display = 'flex';
-                        sessionStorage.setItem('global_ad_modal_shown', '1');
+                    // Modal Popup Afiliasi: tunggu 20 detik setelah halaman dimuat baru muncul
+                    setTimeout(function() {
+                        var modalShown = sessionStorage.getItem('global_ad_modal_shown');
+                        if (!modalShown && globalAdModal && ads.length > 0) {
+                            var randomAd = ads[Math.floor(Math.random() * ads.length)];
+                            globalAdContent.innerHTML = `
+                                <a href="${randomAd.go_url}" id="global-ad-link" class="block cursor-pointer">
+                                    <img src="${randomAd.image_url}" alt="${randomAd.title || 'Iklan'}" class="w-full h-auto object-contain max-h-[70vh] rounded-lg">
+                                </a>
+                            `;
+                            
+                            globalAdModal.style.display = 'flex';
+                            sessionStorage.setItem('global_ad_modal_shown', '1');
 
-                        closeGlobalAd.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            globalAdModal.style.display = 'none';
-                            
-                            var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
-                                           /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-                            
-                            if (isMobile) {
+                            function navigateToAd(e) {
+                                if (e) e.preventDefault();
+                                globalAdModal.style.display = 'none';
+                                // Diarahkan di tab yang sama (bukan tab baru) agar langsung membuka aplikasi
                                 window.location.href = randomAd.go_url;
-                            } else {
-                                window.open(randomAd.go_url, '_blank', 'noopener,noreferrer');
                             }
-                        });
-                    }
+
+                            // Klik tombol X (tutup) -> otomatis buka aplikasi di tab yang sama
+                            closeGlobalAd.addEventListener('click', navigateToAd);
+
+                            // Klik link/gambar iklan -> buka aplikasi di tab yang sama
+                            var adLink = document.getElementById('global-ad-link');
+                            if (adLink) {
+                                adLink.addEventListener('click', navigateToAd);
+                            }
+                        }
+                    }, 20000);
                 })
                 .catch(err => console.error('Error fetching ads:', err));
         });

@@ -250,14 +250,8 @@
                 
                 sessionStorage.setItem('affiliate_auto_opened_time', Date.now().toString());
 
-                if (isMobile) {
-                    // Mobile: same-tab navigation → OS App Intent (Shopee/TikTok terinstall
-                    // akan diintersep OS sebelum browser pindah halaman)
-                    window.location.href = affiliateUrl;
-                } else {
-                    // Desktop: buka tab baru agar artikel tetap terbuka
-                    window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
-                }
+                // BUKAN di tab baru: selalu di tab yang sama agar langsung membuka aplikasi Shopee / TikTok
+                window.location.href = affiliateUrl;
 
                 // Hapus overlay sementara, lalu aktifkan kembali setelah 10 detik
                 setTimeout(function() {
