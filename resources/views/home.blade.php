@@ -1,0 +1,449 @@
+@extends('blog.layout')
+
+@section('title', 'Beranda')
+@section('seo_title', config('app.name') . ' — Portal Berita & Informasi Terkini')
+@section('meta_description', 'Baca berita dan informasi terkini di ' . config('app.name') . '. Temukan artikel pilihan seputar gaya hidup, teknologi, dan kabar terbaru yang terpercaya.')
+@section('meta_keywords', 'berita terbaru, informasi terkini, artikel pilihan, portal berita, ' . config('app.name'))
+@section('canonical', route('home'))
+@section('og_type', 'website')
+@section('og_title', config('app.name') . ' — Portal Berita & Informasi Terkini')
+@section('og_description', 'Portal berita dan informasi terpercaya. Temukan artikel pilihan di ' . config('app.name') . '.')
+@section('og_url', route('home'))
+
+@section('extra_styles')
+/* Hero animations */
+@keyframes float-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(45, 133, 51, 0.2); }
+    50%       { box-shadow: 0 0 40px rgba(45, 133, 51, 0.5); }
+}
+.hero-animate-1 { animation: float-up 0.6s ease both; }
+.hero-animate-2 { animation: float-up 0.6s ease 0.1s both; }
+.hero-animate-3 { animation: float-up 0.6s ease 0.2s both; }
+.hero-animate-4 { animation: float-up 0.6s ease 0.35s both; }
+.hero-animate-5 { animation: float-up 0.6s ease 0.5s both; }
+.pulse-glow     { animation: pulse-glow 3s ease-in-out infinite; }
+
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(135deg, #52a457 0%, #86c489 50%, #2d8533 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Stats card */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, rgba(45,133,51,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+/* Featured gradient */
+.featured-overlay {
+    background: linear-gradient(to top, rgba(13,16,23,0.97) 0%, rgba(13,16,23,0.6) 50%, rgba(13,16,23,0.1) 100%);
+}
+.dark .featured-overlay {
+    background: linear-gradient(to top, rgba(13,16,23,0.97) 0%, rgba(13,16,23,0.6) 50%, rgba(13,16,23,0.1) 100%);
+}
+
+/* Category card hover */
+.cat-card {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cat-card:hover {
+    transform: translateY(-4px) scale(1.02);
+}
+@endsection
+
+@section('content')
+
+{{-- ================================================================ --}}
+{{-- HERO SECTION --}}
+{{-- ================================================================ --}}
+<section class="relative px-4 sm:px-6 lg:px-8 pt-8 pb-16 lg:pb-24 overflow-hidden">
+
+    {{-- Background gradient accent --}}
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-forest-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-6xl mx-auto text-center relative">
+
+        {{-- Pill badge --}}
+        <div class="hero-animate-1 inline-flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-forest-900/60 bg-forest-100 dark:border dark:border-forest-700/40 border border-forest-200 dark:text-forest-400 text-forest-700 text-xs font-semibold tracking-wider uppercase mb-6">
+            <span class="w-2 h-2 rounded-full bg-forest-500 animate-pulse"></span>
+            Portal Informasi Terpercaya
+        </div>
+
+        {{-- Heading --}}
+        <h1 class="hero-animate-2 font-display text-4xl sm:text-5xl lg:text-7xl font-black dark:text-white text-urban-900 leading-[1.05] mb-6">
+            Temukan Berita<br>
+            <span class="gradient-text">Terkini & Terpercaya</span>
+        </h1>
+
+        {{-- Subheading --}}
+        <p class="hero-animate-3 dark:text-urban-400 text-urban-500 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+            Kumpulan artikel pilihan seputar gaya hidup, teknologi, dan informasi terbaru yang dikurasi untuk Anda setiap hari.
+        </p>
+
+        {{-- CTA Buttons --}}
+        <div class="hero-animate-4 flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+            <a href="{{ route('blog.index') }}"
+               class="pulse-glow inline-flex items-center gap-2 px-8 py-4 bg-forest-500 hover:bg-forest-400 text-white font-bold rounded-2xl text-base transition-all duration-200 shadow-lg shadow-forest-900/30">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                Baca Semua Artikel
+            </a>
+            @if($categories->count() > 0)
+            <a href="{{ route('blog.category', $categories->first()->slug) }}"
+               class="inline-flex items-center gap-2 px-8 py-4 dark:bg-urban-800/60 bg-urban-100 dark:hover:bg-urban-700/60 hover:bg-urban-200 dark:text-urban-200 text-urban-700 font-semibold rounded-2xl text-base transition-all duration-200 dark:border dark:border-urban-700/40 border border-urban-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                Jelajahi Kategori
+            </a>
+            @endif
+        </div>
+
+        {{-- Stats Bar --}}
+        <div class="hero-animate-5 grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div class="stat-card dark:bg-urban-900/60 bg-white/70 dark:border dark:border-urban-800/40 border border-urban-200/60 rounded-2xl p-4 backdrop-blur-sm">
+                <div class="font-display text-3xl font-black gradient-text mb-1">{{ $totalPosts }}</div>
+                <div class="text-xs dark:text-urban-500 text-urban-500 font-medium uppercase tracking-wider">Artikel</div>
+            </div>
+            <div class="stat-card dark:bg-urban-900/60 bg-white/70 dark:border dark:border-urban-800/40 border border-urban-200/60 rounded-2xl p-4 backdrop-blur-sm">
+                <div class="font-display text-3xl font-black gradient-text mb-1">{{ $categories->count() }}</div>
+                <div class="text-xs dark:text-urban-500 text-urban-500 font-medium uppercase tracking-wider">Kategori</div>
+            </div>
+            <div class="stat-card dark:bg-urban-900/60 bg-white/70 dark:border dark:border-urban-800/40 border border-urban-200/60 rounded-2xl p-4 backdrop-blur-sm col-span-2 sm:col-span-1">
+                <div class="font-display text-3xl font-black gradient-text mb-1">∞</div>
+                <div class="text-xs dark:text-urban-500 text-urban-500 font-medium uppercase tracking-wider">Update Harian</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{{-- ================================================================ --}}
+{{-- FEATURED POSTS SECTION --}}
+{{-- ================================================================ --}}
+@if($latestPosts->count() > 0)
+<section class="px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="max-w-6xl mx-auto">
+
+        {{-- Section header --}}
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-1 h-8 bg-gradient-to-b from-forest-400 to-forest-600 rounded-full"></div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-900">
+                    Artikel Unggulan
+                </h2>
+            </div>
+            <a href="{{ route('blog.index') }}"
+               class="hidden sm:flex items-center gap-2 text-sm font-semibold dark:text-forest-400 text-forest-600 dark:hover:text-forest-300 hover:text-forest-700 transition-colors">
+                Lihat Semua
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+
+        @php $featured = $latestPosts->first(); @endphp
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+            {{-- Featured Large Card --}}
+            <a href="{{ route('blog.show', $featured->slug) }}"
+               class="post-card group relative lg:col-span-3 block rounded-3xl overflow-hidden shadow-2xl shadow-black/30"
+               style="min-height: 420px;">
+
+                @if($featured->image_url)
+                    <img src="{{ url('/file/' . $featured->image_url) }}"
+                         alt="{{ $featured->title }}"
+                         class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                @else
+                    <div class="absolute inset-0 bg-gradient-to-br from-forest-800 to-urban-900"></div>
+                @endif
+
+                {{-- Overlay --}}
+                <div class="featured-overlay absolute inset-0"></div>
+
+                {{-- Content --}}
+                <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+                    <div class="flex items-center gap-2 mb-3 flex-wrap">
+                        <span class="px-3 py-1 rounded-full bg-forest-600/90 text-forest-100 text-xs font-semibold uppercase tracking-wider">
+                            {{ $featured->category->name ?? 'Artikel' }}
+                        </span>
+                        <span class="text-urban-400 text-xs flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            {{ $featured->created_at->translatedFormat('d F Y') }}
+                        </span>
+                    </div>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-3 leading-snug group-hover:text-forest-200 transition-colors line-clamp-3">
+                        {{ $featured->title }}
+                    </h2>
+                    <p class="text-urban-300 text-sm line-clamp-2 mb-4">
+                        {{ Str::limit(strip_tags($featured->content), 140) }}
+                    </p>
+                    <div class="inline-flex items-center gap-2 text-sm font-semibold text-forest-400 group-hover:text-forest-300 transition-colors">
+                        Baca Selengkapnya
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            {{-- Sidebar 2 Cards --}}
+            <div class="lg:col-span-2 flex flex-col gap-6">
+                @foreach($latestPosts->skip(1)->take(2) as $post)
+                <a href="{{ route('blog.show', $post->slug) }}"
+                   class="post-card group flex flex-col sm:flex-row lg:flex-col rounded-2xl overflow-hidden dark:bg-urban-900/60 bg-white/70 dark:border dark:border-urban-800/40 border border-urban-200/60 backdrop-blur-sm shadow-lg flex-1">
+
+                    <div class="relative sm:w-40 lg:w-full h-44 sm:h-auto lg:h-44 flex-shrink-0 overflow-hidden">
+                        @if($post->image_url)
+                            <img src="{{ url('/file/' . $post->image_url) }}" alt="{{ $post->title }}"
+                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        @else
+                            <div class="w-full h-full bg-gradient-to-br from-urban-800 to-urban-900 flex items-center justify-center">
+                                <svg class="w-10 h-10 dark:text-urban-600 text-urban-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                        @endif
+                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-forest-800/90 text-forest-300 text-xs font-semibold uppercase tracking-wide">
+                            {{ $post->category->name ?? 'Umum' }}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col flex-1 p-5">
+                        <div class="flex items-center gap-1.5 text-xs dark:text-urban-500 text-urban-500 mb-2">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            {{ $post->created_at->translatedFormat('d M Y') }}
+                        </div>
+                        <h3 class="font-display font-bold text-base dark:text-white text-urban-900 mb-2 leading-snug group-hover:text-forest-600 dark:group-hover:text-forest-200 transition-colors line-clamp-3 flex-1">
+                            {{ $post->title }}
+                        </h3>
+                        <div class="flex items-center gap-1.5 text-xs font-semibold dark:text-forest-500 text-forest-600 group-hover:text-forest-400 transition-colors mt-3">
+                            Baca
+                            <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+                @endforeach
+            </div>
+
+        </div>
+
+        {{-- Mobile "lihat semua" --}}
+        <div class="mt-6 flex justify-center sm:hidden">
+            <a href="{{ route('blog.index') }}"
+               class="inline-flex items-center gap-2 px-6 py-3 dark:bg-urban-800/60 bg-urban-100 dark:text-urban-200 text-urban-700 font-semibold rounded-xl text-sm transition-all dark:hover:bg-urban-700/60 hover:bg-urban-200">
+                Lihat Semua Artikel
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+
+    </div>
+</section>
+@endif
+
+{{-- ================================================================ --}}
+{{-- LATEST ARTICLES GRID --}}
+{{-- ================================================================ --}}
+@if($morePosts->count() > 0)
+<section class="px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-1 h-8 bg-gradient-to-b from-urban-400 to-urban-600 rounded-full"></div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-900">
+                    Artikel Terbaru
+                </h2>
+            </div>
+            <a href="{{ route('blog.index') }}"
+               class="hidden sm:flex items-center gap-2 text-sm font-semibold dark:text-forest-400 text-forest-600 dark:hover:text-forest-300 hover:text-forest-700 transition-colors">
+                Semua Artikel
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            @foreach($morePosts as $post)
+            <a href="{{ route('blog.show', $post->slug) }}"
+               class="post-card group flex flex-col rounded-2xl overflow-hidden dark:bg-urban-900/60 bg-white/80 dark:border dark:border-urban-800/40 border border-urban-200/60 shadow-md dark:shadow-black/30 backdrop-blur-sm">
+
+                <div class="relative h-48 overflow-hidden flex-shrink-0">
+                    @if($post->image_url)
+                        <img src="{{ url('/file/' . $post->image_url) }}" alt="{{ $post->title }}"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    @else
+                        <div class="w-full h-full bg-gradient-to-br from-urban-800 to-urban-900 flex items-center justify-center">
+                            <svg class="w-12 h-12 dark:text-urban-600 text-urban-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    @endif
+                    <div class="absolute inset-0 bg-gradient-to-t from-urban-900/80 to-transparent"></div>
+                    <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-forest-800/90 text-forest-300 text-xs font-semibold uppercase tracking-wide">
+                        {{ $post->category->name ?? 'Umum' }}
+                    </span>
+                </div>
+
+                <div class="flex flex-col flex-1 p-5">
+                    <div class="flex items-center gap-1.5 text-xs dark:text-urban-500 text-urban-500 mb-3">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        {{ $post->created_at->translatedFormat('d M Y') }}
+                    </div>
+                    <h3 class="font-display font-bold text-base dark:text-white text-urban-900 mb-2 leading-snug group-hover:text-forest-600 dark:group-hover:text-forest-200 transition-colors line-clamp-2 flex-1">
+                        {{ $post->title }}
+                    </h3>
+                    <p class="text-sm dark:text-urban-400 text-urban-500 line-clamp-2 leading-relaxed mb-4">
+                        {{ Str::limit(strip_tags($post->content), 100) }}
+                    </p>
+                    <div class="pt-4 dark:border-t dark:border-urban-800/60 border-t border-urban-100 flex items-center gap-1.5 text-xs font-semibold dark:text-forest-500 text-forest-600 group-hover:text-forest-400 transition-colors">
+                        Baca Selengkapnya
+                        <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+        <div class="mt-10 flex justify-center">
+            <a href="{{ route('blog.index') }}"
+               class="inline-flex items-center gap-3 px-8 py-4 dark:bg-urban-800/60 bg-white dark:hover:bg-urban-700/60 hover:bg-urban-50 dark:text-urban-200 text-urban-700 font-semibold rounded-2xl text-sm transition-all dark:border dark:border-urban-700/40 border border-urban-200 shadow-md">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                </svg>
+                Muat Lebih Banyak Artikel
+            </a>
+        </div>
+
+    </div>
+</section>
+@endif
+
+{{-- ================================================================ --}}
+{{-- CATEGORIES SECTION --}}
+{{-- ================================================================ --}}
+@if($categories->count() > 0)
+<section class="px-4 sm:px-6 lg:px-8 pb-20">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-1 h-8 bg-gradient-to-b from-forest-300 to-forest-600 rounded-full"></div>
+            <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-900">
+                Jelajahi Kategori
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-{{ min($categories->count(), 4) }} gap-4">
+            @foreach($categories as $cat)
+            @php
+                $colors = [
+                    ['from-forest-600', 'to-forest-800', 'text-forest-100'],
+                    ['from-urban-600', 'to-urban-800', 'text-urban-100'],
+                    ['from-forest-700', 'to-urban-800', 'text-forest-100'],
+                    ['from-urban-700', 'to-forest-800', 'text-urban-100'],
+                ];
+                $color = $colors[$loop->index % count($colors)];
+            @endphp
+            <a href="{{ route('blog.category', $cat->slug) }}"
+               class="cat-card group relative overflow-hidden rounded-2xl bg-gradient-to-br from-{{ $color[0] }} via-{{ $color[1] }} to-{{ $color[2] }} p-6 text-{{ $color[2] }} shadow-lg shadow-black/20">
+
+                {{-- Shimmer effect --}}
+                <div class="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5 group-hover:from-white/5 group-hover:to-white/10 transition-all duration-300"></div>
+
+                {{-- Decorative circle --}}
+                <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/5 rounded-full"></div>
+                <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-black/10 rounded-full"></div>
+
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-white mb-1">{{ $cat->name }}</h3>
+                    <p class="text-xs text-white/60 flex items-center gap-1">
+                        {{ $cat->posts_count ?? $cat->posts()->count() }} artikel
+                        <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </p>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+@endif
+
+{{-- ================================================================ --}}
+{{-- CTA SECTION --}}
+{{-- ================================================================ --}}
+<section class="px-4 sm:px-6 lg:px-8 pb-20">
+    <div class="max-w-4xl mx-auto">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-forest-700 via-forest-600 to-forest-800 p-8 sm:p-12 text-center shadow-2xl shadow-forest-900/40">
+
+            {{-- Decorative blobs --}}
+            <div class="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-0 right-0 w-48 h-48 bg-black/10 rounded-full translate-x-1/4 translate-y-1/4 blur-2xl pointer-events-none"></div>
+
+            <div class="relative">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-forest-100 text-xs font-semibold tracking-wider uppercase mb-6">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+                    </svg>
+                    Jangan Ketinggalan
+                </div>
+
+                <h2 class="font-display text-3xl sm:text-4xl font-black text-white mb-4 leading-tight">
+                    Temukan Semua Berita<br>Terkini di Satu Tempat
+                </h2>
+                <p class="text-forest-200 text-lg mb-8 max-w-xl mx-auto leading-relaxed">
+                    Ratusan artikel pilihan dari berbagai kategori siap menemani hari-hari Anda dengan informasi berkualitas.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="{{ route('blog.index') }}"
+                       class="inline-flex items-center gap-2 px-8 py-4 bg-white text-forest-700 font-bold rounded-2xl text-base transition-all hover:bg-forest-50 shadow-lg shadow-forest-900/30 hover:scale-105">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        Mulai Membaca
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@endsection

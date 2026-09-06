@@ -6,6 +6,16 @@ use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
+    public function home()
+    {
+        $latestPosts  = \App\Models\Post::with('category')->latest()->take(5)->get();
+        $morePosts    = \App\Models\Post::with('category')->latest()->skip(5)->take(6)->get();
+        $categories   = \App\Models\Category::withCount('posts')->get();
+        $totalPosts   = \App\Models\Post::count();
+
+        return view('home', compact('latestPosts', 'morePosts', 'categories', 'totalPosts'));
+    }
+
     public function index()
     {
         $posts = \App\Models\Post::latest()->paginate(12);
