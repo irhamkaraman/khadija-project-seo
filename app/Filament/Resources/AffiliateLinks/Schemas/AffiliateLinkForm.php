@@ -27,42 +27,94 @@ class AffiliateLinkForm
                             if (blank($state)) return;
 
                             try {
-                                $response = \Illuminate\Support\Facades\Http::timeout(10)
-                                    ->withOptions(['verify' => false])
+                                // 1. Attempt with Facebook Bot User Agent (usually whitelisted by Shopee/TikTok for link previews)
+                                $response = \Illuminate\Support\Facades\Http::timeout(15)
+                                    ->withOptions([
+                                        'verify' => false,
+                                        'allow_redirects' => true
+                                    ])
                                     ->withHeaders([
-                                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                                        'Accept'     => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                                        'User-Agent' => 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+                                        'Accept'     => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                                        'Accept-Language' => 'en-US,en;q=0.5',
                                     ])
                                     ->get($state);
+                                
+                                $html = $response->body();
 
-                                if ($response->successful()) {
+                                // If empty or not successful, try fallback Googlebot
+                                if (!$response->successful() || strlen($html) < 500) {
+                                    $response = \Illuminate\Support\Facades\Http::timeout(15)
+                                        ->withOptions(['verify' => false, 'allow_redirects' => true])
+                                        ->withHeaders([
+                                            'User-Agent' => 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                                        ])
+                                        ->get($state);
                                     $html = $response->body();
+                                }
 
-                                    // Ambil Title dari og:title atau <title>
-                                    if (
-                                        preg_match('/\<meta[^\>]*property=["\']og:title["\'][^\>]*content=["\'](.*?)["\']/is', $html, $m) ||
-                                        preg_match('/\<title[^\>]*\>(.*?)\<\/title\>/is', $html, $m)
-                                    ) {
-                                        $title = trim(html_entity_decode($m[1]));
-                                        $set('title', $title);
-                                        $set('slug', Str::slug($title));
+                                if ($html) {
+                                    $dom = new \DOMDocument();
+                                    @$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+                                    
+                                    $scrapedTitle = '';
+                                    $scrapedDesc = '';
+                                    $scrapedImage = '';
+
+                                    $metas = $dom->getElementsByTagName('meta');
+                                    foreach ($metas as $meta) {
+                                        $property = strtolower($meta->getAttribute('property') ?: $meta->getAttribute('name'));
+                                        $content = $meta->getAttribute('content');
+                                        
+                                        if (in_array($property, ['og:title', 'twitter:title']) && !$scrapedTitle) {
+                                            $scrapedTitle = $content;
+                                        }
+                                        if (in_array($property, ['og:description', 'twitter:description', 'description']) && !$scrapedDesc) {
+                                            $scrapedDesc = $content;
+                                        }
+                                        if (in_array($property, ['og:image', 'twitter:image', 'image']) && !$scrapedImage) {
+                                            $scrapedImage = $content;
+                                        }
                                     }
 
-                                    // Ambil Description
-                                    if (
-                                        preg_match('/\<meta[^\>]*property=["\']og:description["\'][^\>]*content=["\'](.*?)["\']/is', $html, $m) ||
-                                        preg_match('/\<meta[^\>]*name=["\']description["\'][^\>]*content=["\'](.*?)["\']/is', $html, $m)
-                                    ) {
-                                        $set('description', trim(html_entity_decode($m[1])));
+                                    if (!$scrapedTitle) {
+                                        $titles = $dom->getElementsByTagName('title');
+                                        if ($titles->length > 0) {
+                                            $scrapedTitle = $titles->item(0)->textContent;
+                                        }
                                     }
 
-                                    // Ambil Image dari og:image
-                                    if (preg_match('/\<meta[^\>]*property=["\']og:image["\'][^\>]*content=["\'](.*?)["\']/is', $html, $m)) {
-                                        $set('image_url', trim($m[1]));
+                                    if ($scrapedTitle) {
+                                        $set('title', trim($scrapedTitle));
+                                        $set('slug', Str::slug(trim($scrapedTitle)));
+                                    }
+                                    if ($scrapedDesc) {
+                                        $set('description', trim($scrapedDesc));
+                                    }
+                                    if ($scrapedImage) {
+                                        $set('image_url', $scrapedImage);
+                                    }
+
+                                    if ($scrapedTitle || $scrapedImage) {
+                                        \Filament\Notifications\Notification::make()
+                                            ->title('Berhasil Menarik Data')
+                                            ->body('Data SEO berhasil diambil dari sumber.')
+                                            ->success()
+                                            ->send();
+                                    } else {
+                                        \Filament\Notifications\Notification::make()
+                                            ->title('Data tidak lengkap')
+                                            ->body('Web tujuan mungkin memblokir scraper atau tidak memiliki tag meta.')
+                                            ->warning()
+                                            ->send();
                                     }
                                 }
                             } catch (\Exception $e) {
-                                // Abaikan error scraping
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Gagal menarik data')
+                                    ->body($e->getMessage())
+                                    ->danger()
+                                    ->send();
                             }
                         }),
 
