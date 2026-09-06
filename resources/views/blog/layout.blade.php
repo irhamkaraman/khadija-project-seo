@@ -292,10 +292,11 @@
             <div class="flex items-center justify-between h-16 lg:h-20">
 
                 {{-- Logo --}}
-                <a href="{{ route('home') }}" class="flex items-center group flex-shrink-0">
-                    <div class="dark:bg-white dark:rounded-xl dark:p-1 dark:shadow-sm">
-                        <img src="{{ asset('images/logo.jpg') }}" alt="{{ config('app.name') }}" class="h-9 sm:h-10 w-auto mix-blend-multiply dark:mix-blend-normal group-hover:scale-105 transition-transform duration-200">
-                    </div>
+                <a href="{{ route('home') }}" class="flex items-center gap-2.5 group flex-shrink-0">
+                    <img src="{{ asset('images/logo_icon.png') }}" alt="Icon" class="w-10 sm:w-11 h-auto group-hover:scale-105 transition-transform duration-200 drop-shadow-sm">
+                    <span class="font-display font-bold text-2xl sm:text-3xl tracking-tight dark:text-white text-urban-900 group-hover:text-forest-600 dark:group-hover:text-forest-400 transition-colors">
+                        Sampein Aja
+                    </span>
                 </a>
 
                 {{-- Desktop Nav --}}
@@ -474,10 +475,9 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                 {{-- Brand --}}
                 <div>
-                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 mb-4">
-                        <div class="dark:bg-white dark:rounded-xl dark:p-1 dark:shadow-sm">
-                            <img src="{{ asset('images/logo.jpg') }}" alt="{{ config('app.name') }}" class="h-8 w-auto mix-blend-multiply dark:mix-blend-normal">
-                        </div>
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 mb-4 group">
+                        <img src="{{ asset('images/logo_icon.png') }}" alt="Icon" class="w-9 h-auto group-hover:scale-105 transition-transform duration-200">
+                        <span class="font-display font-bold text-xl dark:text-white text-urban-950 group-hover:text-forest-600 dark:group-hover:text-forest-400 transition-colors">{{ config('app.name') }}</span>
                     </a>
                     <p class="text-sm dark:text-urban-400 text-urban-600 leading-relaxed">
                         Portal berita dan informasi terpercaya. Temukan artikel pilihan seputar gaya hidup, teknologi, dan kabar terkini.
