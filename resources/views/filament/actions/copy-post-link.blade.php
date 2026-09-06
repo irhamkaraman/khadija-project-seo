@@ -14,14 +14,18 @@
 
     $scheme = (request()->isSecure() || str_starts_with($appUrl, 'https://') || (!$isLocal && !filter_var($rawHost, FILTER_VALIDATE_IP))) ? 'https://' : 'http://';
     $path = route('blog.show', $record->slug, false);
+    
+    // Generate random string to bypass WhatsApp cache
+    $randomStr = rtrim(strtr(base64_encode(random_bytes(6)), '+/', '-_'), '=');
+    $pathWithRandom = $path . '?ref=' . $randomStr;
 
     // 1. URL Utama Rekomendasi (Format Lengkap HTTPS)
-    $fullUrl = $scheme . $host . $path;
+    $fullUrl = $scheme . $host . $pathWithRandom;
 
     // 2. Format alternatif WWW atau tanpa protokol
     $isWww = str_starts_with($host, 'www.');
     $altHost = $isWww ? preg_replace('/^www\./i', '', $host) : 'www.' . $host;
-    $altUrl = $isLocal ? $host . $path : ($isWww ? $scheme . $altHost . $path : 'https://' . $altHost . $path);
+    $altUrl = $isLocal ? $host . $pathWithRandom : ($isWww ? $scheme . $altHost . $pathWithRandom : 'https://' . $altHost . $pathWithRandom);
     $altLabel = $isLocal ? 'Format Tanpa Protokol' : ($isWww ? 'Format Non-WWW (' . $altHost . ')' : 'Format WWW (www.' . $host . ')');
 @endphp
 
