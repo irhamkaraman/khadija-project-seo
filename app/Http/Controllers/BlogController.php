@@ -135,12 +135,15 @@ class BlogController extends Controller
             $rawImage = ltrim($post->image_url, '/');
             $rawImage = preg_replace('#^(file/|storage/)#', '', $rawImage);
             $filePath = storage_path('app/public/' . $rawImage);
+            if (!file_exists($filePath)) {
+                $filePath = public_path('storage/' . $rawImage);
+            }
             $remoteUrl = null;
 
             if (!file_exists($filePath)) {
                 $appUrl = config('app.url');
                 if (!empty($appUrl) && !str_contains($appUrl, 'localhost') && !str_contains($appUrl, '127.0.0.1')) {
-                    $remoteUrl = rtrim($appUrl, '/') . '/file/' . $rawImage;
+                    $remoteUrl = rtrim($appUrl, '/') . '/storage/' . $rawImage;
                 }
             }
         }

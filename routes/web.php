@@ -12,33 +12,30 @@ Route::get('/ajax/ads', [BlogController::class, 'ajaxAds'])->name('ajax.ads');
 
 Route::get('/og-image/{slug}.jpg', [BlogController::class, 'ogImage'])
     ->name('blog.og-image')
-    ->withoutMiddleware([
-        \Illuminate\Session\Middleware\StartSession::class,
-        \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-    ]);
+    ->withoutMiddleware([\Illuminate\Session\Middleware\StartSession::class]);
 
 Route::get('/file/{path}', function (string $path) {
     $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        $filePath = public_path('storage/' . $path);
+    }
 
     if (!file_exists($filePath)) {
         abort(404);
     }
 
-    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+    $mimeType = mime_content_type($filePath) ?: 'image/jpeg';
     $fileSize = filesize($filePath);
 
     return response()->file($filePath, [
         'Content-Type'                => $mimeType,
         'Content-Length'              => $fileSize,
-        'Cache-Control'               => 'public, max-age=2592000, immutable',
+        'Cache-Control'               => 'public, max-age=31536000, immutable',
         'Access-Control-Allow-Origin' => '*',
         'Accept-Ranges'               => 'bytes',
     ]);
 })->where('path', '.*')->name('storage.serve')
-  ->withoutMiddleware([
-      \Illuminate\Session\Middleware\StartSession::class,
-      \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-  ]);
+  ->withoutMiddleware([\Illuminate\Session\Middleware\StartSession::class]);
 
 Route::prefix('blog')->group(function () {
     Route::get('/', [BlogController::class, 'index'])->name('blog.index');

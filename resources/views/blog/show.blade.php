@@ -16,7 +16,7 @@
         if (Str::startsWith($post->image_url, ['http://', 'https://'])) {
             $directImageFallback = $post->image_url;
         } else {
-            $directImageFallback = $scheme . $baseHost . '/file/' . ltrim(preg_replace('#^(file/|storage/)#', '', $post->image_url), '/');
+            $directImageFallback = $scheme . $baseHost . '/storage/' . ltrim(preg_replace('#^(file/|storage/)#', '', $post->image_url), '/');
         }
     } else {
         $seoImageAbs = $scheme . $baseHost . '/favicon.ico';
