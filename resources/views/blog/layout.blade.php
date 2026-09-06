@@ -434,6 +434,70 @@
         </div>
     </footer>
 
+    {{-- ===================== GLOBAL AD MODAL ===================== --}}
+    <div id="global-ad-modal" class="fixed inset-0 z-[99999] bg-black/80 flex items-center justify-center p-4" style="display: none;">
+        <div class="relative bg-white p-2 w-full max-w-lg shadow-2xl">
+            <button id="close-global-ad" class="absolute -top-4 -right-4 w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg font-bold border-2 border-white cursor-pointer hover:bg-red-700 transition-colors z-10">X</button>
+            <div id="global-ad-content" class="w-full text-center">
+                <!-- Ad image will be injected here -->
+            </div>
+            <div class="text-center mt-2 text-[10px] text-gray-500 font-sans uppercase tracking-widest">Advertisement</div>
+        </div>
+    </div>
+
+    {{-- AJAX Ads Logic --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var modalShown = sessionStorage.getItem('global_ad_modal_shown');
+            var globalAdModal = document.getElementById('global-ad-modal');
+            var closeGlobalAd = document.getElementById('close-global-ad');
+            var globalAdContent = document.getElementById('global-ad-content');
+
+            fetch('/ajax/ads?limit=10')
+                .then(response => response.json())
+                .then(ads => {
+                    if (ads.length === 0) return;
+
+                    var placeholders = document.querySelectorAll('.ajax-ad-slot');
+                    placeholders.forEach((el, index) => {
+                        var adIndex = index % ads.length; 
+                        var ad = ads[adIndex];
+                        el.innerHTML = `
+                            <div class="my-6 text-center border-y border-gray-300 dark:border-gray-800 py-4 bg-gray-50 dark:bg-urban-900">
+                                <span class="block text-[10px] text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
+                                <a href="${ad.go_url}" target="_blank" rel="noopener noreferrer" class="inline-block relative">
+                                    <img src="${ad.image_url}" alt="${ad.title}" class="max-w-full h-auto mx-auto object-contain max-h-[250px] shadow-sm border border-gray-200 dark:border-gray-700">
+                                </a>
+                            </div>
+                        `;
+                    });
+
+                    if (!modalShown && globalAdModal) {
+                        var randomAd = ads[Math.floor(Math.random() * ads.length)];
+                        globalAdContent.innerHTML = `<img src="${randomAd.image_url}" alt="Ad" class="w-full h-auto object-contain max-h-[70vh]">`;
+                        
+                        globalAdModal.style.display = 'flex';
+                        sessionStorage.setItem('global_ad_modal_shown', '1');
+
+                        closeGlobalAd.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            globalAdModal.style.display = 'none';
+                            
+                            var isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+                                           /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+                            
+                            if (isMobile) {
+                                window.location.href = randomAd.go_url;
+                            } else {
+                                window.open(randomAd.go_url, '_blank', 'noopener,noreferrer');
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Error fetching ads:', err));
+        });
+    </script>
+
     @yield('scripts')
 
     {{-- Alpine component functions --}}

@@ -53,4 +53,22 @@ class BlogController extends Controller
         
         return view('blog.show', compact('post', 'randomShareLink'));
     }
+    public function ajaxAds(Request $request)
+    {
+        $limit = $request->get('limit', 5);
+        $ads = AffiliateLink::active()
+            ->whereNotNull('image_url')
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get()
+            ->map(function ($ad) {
+                return [
+                    'title' => $ad->title,
+                    'image_url' => \Illuminate\Support\Str::startsWith($ad->image_url, 'http') ? $ad->image_url : url('/file/' . $ad->image_url),
+                    'go_url' => route('affiliate.go', $ad->slug)
+                ];
+            });
+
+        return response()->json($ads);
+    }
 }

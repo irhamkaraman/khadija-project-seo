@@ -168,6 +168,11 @@
 </section>
 @endif
 
+{{-- Placeholder Iklan Klasik AJAX --}}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="ajax-ad-slot"></div>
+</div>
+
 @if($morePosts->count() > 0)
 <section class="px-4 sm:px-6 lg:px-8 pb-16">
     <div class="max-w-6xl mx-auto">
@@ -247,6 +252,11 @@
     </div>
 </section>
 @endif
+
+{{-- Placeholder Iklan Klasik AJAX --}}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="ajax-ad-slot"></div>
+</div>
 
 {{-- ================================================================ --}}
 {{-- CATEGORIES SECTION --}}

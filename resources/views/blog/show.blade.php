@@ -160,10 +160,16 @@
         </div>
         @endif
 
+        {{-- Placeholder Iklan Klasik AJAX (Atas) --}}
+        <div class="ajax-ad-slot"></div>
+
         {{-- Content --}}
         <div class="article-prose">
             {!! $post->content !!}
         </div>
+
+        {{-- Placeholder Iklan Klasik AJAX (Bawah) --}}
+        <div class="ajax-ad-slot"></div>
 
         {{-- Back Button --}}
         @if($catSlug)
