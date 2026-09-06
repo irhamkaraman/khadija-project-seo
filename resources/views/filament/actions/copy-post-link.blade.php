@@ -17,13 +17,14 @@
     // 1. URL Utama (Sesuai dengan domain saat ini)
     $fullUrl = $scheme . $hostWithPort . $pathWithRandom;
 
-    // 2. Format alternatif WWW atau tanpa WWW
+    // 2. Format alternatif (Hanya teks WWW atau tanpa WWW, tanpa https:// agar lebih bersih)
     $isWww = str_starts_with($host, 'www.');
     $altHost = $isWww ? preg_replace('/^www\./i', '', $host) : 'www.' . $host;
     $altHostWithPort = $altHost . (!in_array($port, [80, 443]) ? ':' . $port : '');
     
-    $altUrl = $isLocal ? $hostWithPort . $pathWithRandom : $scheme . $altHostWithPort . $pathWithRandom;
-    $altLabel = $isLocal ? 'Format Tanpa Protokol' : ($isWww ? 'Format Non-WWW (' . $altHost . ')' : 'Format WWW (www.' . $host . ')');
+    // Hapus $scheme di sini agar format alternatif tidak memakai https://
+    $altUrl = $altHostWithPort . $pathWithRandom;
+    $altLabel = $isLocal ? 'Format Tanpa Protokol' : ($isWww ? 'Format Non-WWW (' . $altHost . ')' : 'Format Singkat (' . $altHost . ')');
 @endphp
 
 <div x-data="{
