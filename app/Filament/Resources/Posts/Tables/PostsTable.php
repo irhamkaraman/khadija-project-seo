@@ -27,15 +27,29 @@ class PostsTable
                     ->label('Judul')
                     ->searchable()
                     ->sortable()
+                    ->limit(40)
+                    ->tooltip(fn (Post $record): string => $record->title)
                     ->weight('bold'),
                 TextColumn::make('category.name')
                     ->label('Kategori')
                     ->badge()
                     ->color('success')
                     ->sortable(),
+                TextColumn::make('views')
+                    ->label('Views')
+                    ->badge()
+                    ->color('info')
+                    ->formatStateUsing(function ($state) {
+                        if ($state >= 1000000) return round($state / 1000000, 1) . 'jt';
+                        if ($state >= 1000) return round($state / 1000, 1) . 'rb';
+                        return $state;
+                    })
+                    ->sortable(),
                 TextColumn::make('slug')
                     ->label('Slug')
                     ->searchable()
+                    ->limit(30)
+                    ->tooltip(fn (Post $record): string => $record->slug)
                     ->color('gray'),
                 TextColumn::make('created_at')
                     ->label('Dibuat')
