@@ -61,7 +61,7 @@
                class="post-card group relative block rounded-2xl overflow-hidden mb-8 border dark:border-urban-800/40 border-urban-200/80 shadow-xl dark:shadow-black/40 shadow-urban-200/60"
                style="min-height: 420px; position: relative;">
                 @if($featured->image_url)
-                    <img src="{{ url('/file/' . $featured->image_url) }}" alt="{{ $featured->title }}"
+                    <img src="{{ $featured->asset_url }}" alt="{{ $featured->title }}"
                          class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                          style="z-index: 1;">
                 @else
@@ -114,7 +114,7 @@
 
                     <div class="relative h-48 overflow-hidden flex-shrink-0">
                         @if($post->image_url)
-                            <img src="{{ url('/file/' . $post->image_url) }}" alt="{{ $post->title }}"
+                            <img src="{{ $post->asset_url }}" alt="{{ $post->title }}"
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         @else
                             <div class="w-full h-full bg-gradient-to-br from-urban-800 to-urban-900 flex items-center justify-center">

@@ -72,7 +72,7 @@ class BlogController extends Controller
             ->map(function ($ad) {
                 return [
                     'title' => $ad->title,
-                    'image_url' => \Illuminate\Support\Str::startsWith($ad->image_url, 'http') ? $ad->image_url : url('/file/' . $ad->image_url),
+                    'image_url' => \Illuminate\Support\Str::startsWith($ad->image_url, ['http://', 'https://']) ? $ad->image_url : asset('storage/' . ltrim(preg_replace('#^(file/|storage/)#', '', $ad->image_url), '/')),
                     'go_url' => route('affiliate.go', $ad->slug)
                 ];
             });

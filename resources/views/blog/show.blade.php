@@ -176,7 +176,7 @@
         {{-- Featured Image --}}
         @if($post->image_url)
         <div class="relative mb-10 rounded-2xl overflow-hidden shadow-xl dark:shadow-black/50 shadow-urban-200/80 border dark:border-urban-800/40 border-urban-200/80">
-            <img src="{{ url('/file/' . $post->image_url) }}" alt="{{ $post->title }}"
+            <img src="{{ $post->asset_url }}" alt="{{ $post->title }}"
                  class="w-full max-h-[500px] object-cover">
             <div class="absolute inset-0 bg-gradient-to-t dark:from-urban-950/60 from-black/20 to-transparent pointer-events-none"></div>
         </div>
