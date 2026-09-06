@@ -243,61 +243,123 @@
 <body class="dark:bg-urban-950 dark:text-urban-100 bg-urban-50 text-urban-900 font-sans antialiased min-h-screen">
 
     {{-- ===================== NAVBAR ===================== --}}
+    @php
+        $navAllCategories = \App\Models\Category::withCount('posts')->orderBy('posts_count', 'desc')->get();
+        $navPrimaryCats   = $navAllCategories->take(4);
+        $navMoreCats      = $navAllCategories->slice(4);
+        $currentCatSlug   = request()->segment(3);
+        $isMoreCatActive  = $navMoreCats->contains('slug', $currentCatSlug);
+    @endphp
+
     <header
         class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 navbar-blur"
         x-data="navApp()"
         x-init="initNav()"
         :class="scrolled
-            ? 'dark:bg-urban-950/90 bg-white/90 shadow-lg dark:shadow-black/30 shadow-urban-200/60 dark:border-b dark:border-urban-800/50 border-b border-urban-200/60'
-            : 'bg-transparent'"
+            ? 'dark:bg-urban-950/95 bg-white/95 shadow-lg dark:shadow-black/40 shadow-urban-200/60 dark:border-b dark:border-urban-800/60 border-b border-urban-200/80'
+            : 'dark:bg-urban-950/80 bg-white/80 border-b border-urban-200/40 dark:border-urban-800/30'"
     >
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 lg:h-20">
 
                 {{-- Logo --}}
-                <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
-                    <svg class="w-8 h-8 text-forest-500 dark:text-forest-400 group-hover:text-forest-400 dark:group-hover:text-forest-300 transition-colors" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="10" width="6" height="18" rx="1" fill="currentColor" opacity="0.5"/>
-                        <rect x="5" y="6" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.7"/>
-                        <rect x="11" y="4" width="8" height="24" rx="1" fill="currentColor" opacity="0.8"/>
-                        <rect x="13" y="1" width="2" height="3" rx="0.5" fill="currentColor"/>
-                        <rect x="21" y="7" width="6" height="21" rx="1" fill="currentColor" opacity="0.5"/>
-                        <path d="M1 28 C6 20 9 24 12 16 C15 8 18 12 20 20 C22 28 26 22 31 28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>
-                    </svg>
+                <a href="{{ route('home') }}" class="flex items-center gap-2.5 group flex-shrink-0">
+                    <div class="w-9 h-9 rounded-xl bg-forest-500/10 dark:bg-forest-500/20 border border-forest-500/20 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                        <svg class="w-5 h-5 text-forest-500 dark:text-forest-400" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="10" width="6" height="18" rx="1" fill="currentColor" opacity="0.5"/>
+                            <rect x="5" y="6" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.7"/>
+                            <rect x="11" y="4" width="8" height="24" rx="1" fill="currentColor" opacity="0.8"/>
+                            <rect x="13" y="1" width="2" height="3" rx="0.5" fill="currentColor"/>
+                            <rect x="21" y="7" width="6" height="21" rx="1" fill="currentColor" opacity="0.5"/>
+                            <path d="M1 28 C6 20 9 24 12 16 C15 8 18 12 20 20 C22 28 26 22 31 28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                        </svg>
+                    </div>
                     <span class="font-display font-bold text-xl tracking-tight dark:text-white text-urban-900 group-hover:text-forest-600 dark:group-hover:text-forest-300 transition-colors">
                         {{ config('app.name') }}
                     </span>
                 </a>
 
                 {{-- Desktop Nav --}}
-                <nav class="hidden md:flex items-center gap-1">
+                <nav class="hidden md:flex items-center gap-1.5">
+                    {{-- Beranda --}}
                     <a href="{{ route('home') }}"
-                       class="category-pill px-4 py-2 rounded-lg text-sm font-medium dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-urban-900 dark:hover:bg-urban-800/60 hover:bg-urban-100 transition-all duration-200">
+                       class="px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-150 {{ request()->routeIs('home') ? 'bg-forest-500/15 text-forest-600 dark:text-forest-400 font-semibold border border-forest-500/25' : 'dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-urban-900 dark:hover:bg-urban-800/60 hover:bg-urban-100' }}">
                         Beranda
                     </a>
+
+                    {{-- Semua Artikel --}}
                     <a href="{{ route('blog.index') }}"
-                       class="category-pill px-4 py-2 rounded-lg text-sm font-medium dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-urban-900 dark:hover:bg-urban-800/60 hover:bg-urban-100 transition-all duration-200">
+                       class="px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-150 {{ request()->routeIs('blog.index') ? 'bg-forest-500/15 text-forest-600 dark:text-forest-400 font-semibold border border-forest-500/25' : 'dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-urban-900 dark:hover:bg-urban-800/60 hover:bg-urban-100' }}">
                         Semua Artikel
                     </a>
-                    @foreach(\App\Models\Category::all() as $cat)
+
+                    {{-- Primary Categories --}}
+                    @foreach($navPrimaryCats as $cat)
+                    @php $isCatActive = request()->is('blog/kategori/' . $cat->slug); @endphp
                     <a href="{{ route('blog.category', $cat->slug) }}"
-                       class="category-pill px-4 py-2 rounded-lg text-sm font-medium dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-forest-700 dark:hover:bg-forest-800/60 hover:bg-forest-50 dark:hover:text-forest-300 transition-all duration-200">
+                       class="px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-150 {{ $isCatActive ? 'bg-forest-500/15 text-forest-600 dark:text-forest-400 font-semibold border border-forest-500/25' : 'dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-urban-900 dark:hover:bg-urban-800/60 hover:bg-urban-100' }}">
                         {{ $cat->name }}
                     </a>
                     @endforeach
+
+                    {{-- Dropdown Kategori Lainnya --}}
+                    @if($navMoreCats->isNotEmpty())
+                    <div class="relative" @click.outside="catDropdownOpen = false">
+                        <button @click="catDropdownOpen = !catDropdownOpen"
+                                type="button"
+                                class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-150 {{ $isMoreCatActive ? 'bg-forest-500/15 text-forest-600 dark:text-forest-400 font-semibold border border-forest-500/25' : 'dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-urban-900 dark:hover:bg-urban-800/60 hover:bg-urban-100' }}">
+                            <span>Kategori</span>
+                            <svg class="w-4 h-4 transition-transform duration-200" :class="catDropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        {{-- Floating Dropdown Card --}}
+                        <div x-show="catDropdownOpen"
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                             class="absolute right-0 top-full mt-2 w-64 bg-white/95 dark:bg-urban-900/95 backdrop-blur-xl border border-urban-200 dark:border-urban-800 rounded-2xl shadow-2xl p-2 z-50">
+                            <div class="text-[11px] font-semibold tracking-wider text-urban-400 dark:text-urban-500 uppercase px-3 py-1.5 mb-1">
+                                Kategori Lainnya
+                            </div>
+                            <div class="space-y-0.5 max-h-72 overflow-y-auto">
+                                @foreach($navMoreCats as $cat)
+                                @php $isSubCatActive = request()->is('blog/kategori/' . $cat->slug); @endphp
+                                <a href="{{ route('blog.category', $cat->slug) }}"
+                                   @click="catDropdownOpen = false"
+                                   class="flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors {{ $isSubCatActive ? 'bg-forest-500/15 text-forest-600 dark:text-forest-400 font-semibold' : 'dark:text-urban-300 text-urban-700 dark:hover:bg-urban-800/80 hover:bg-urban-100 dark:hover:text-white hover:text-urban-900' }}">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $isSubCatActive ? 'bg-forest-500' : 'bg-urban-400 dark:bg-urban-600' }}"></span>
+                                        <span class="truncate">{{ $cat->name }}</span>
+                                    </div>
+                                    @if($cat->posts_count > 0)
+                                    <span class="text-[11px] px-2 py-0.5 rounded-full bg-urban-100 dark:bg-urban-800 text-urban-500 dark:text-urban-400 font-mono">
+                                        {{ $cat->posts_count }}
+                                    </span>
+                                    @endif
+                                </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </nav>
 
+                {{-- Right Actions --}}
                 <div class="flex items-center gap-2">
                     {{-- Dark/Light Mode Toggle --}}
                     <button @click="toggleTheme()"
                             id="theme-toggle-btn"
-                            class="theme-toggle flex items-center justify-center w-10 h-10 rounded-lg dark:bg-urban-800/60 bg-urban-100 dark:text-urban-300 text-urban-600 dark:hover:text-yellow-300 hover:text-yellow-500 dark:hover:bg-urban-700/60 hover:bg-urban-200 transition-all"
+                            class="theme-toggle flex items-center justify-center w-10 h-10 rounded-xl dark:bg-urban-800/70 bg-urban-100/90 border border-urban-200/50 dark:border-urban-700/50 dark:text-urban-300 text-urban-600 dark:hover:text-yellow-300 hover:text-yellow-500 dark:hover:bg-urban-700/70 hover:bg-urban-200 transition-all shadow-sm"
                             :title="darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'">
-                        {{-- Bulan = tampil saat light mode (agar user bisa klik untuk ke dark) --}}
                         <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                         </svg>
-                        {{-- Matahari = tampil saat dark mode (agar user bisa klik untuk ke light) --}}
                         <svg x-show="darkMode" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z"/>
                         </svg>
@@ -305,7 +367,7 @@
 
                     {{-- Mobile Hamburger --}}
                     <button @click="mobileMenuOpen = !mobileMenuOpen"
-                            class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg dark:bg-urban-800/60 bg-urban-100 dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-urban-900 dark:hover:bg-urban-700/60 hover:bg-urban-200 transition-all">
+                            class="md:hidden flex items-center justify-center w-10 h-10 rounded-xl dark:bg-urban-800/70 bg-urban-100/90 border border-urban-200/50 dark:border-urban-700/50 dark:text-urban-300 text-urban-600 dark:hover:text-white hover:text-urban-900 dark:hover:bg-urban-700/70 hover:bg-urban-200 transition-all shadow-sm">
                         <svg x-show="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
@@ -318,7 +380,7 @@
             </div>
         </div>
 
-        {{-- Mobile Menu --}}
+        {{-- Mobile Drawer Menu --}}
         <div x-show="mobileMenuOpen" x-cloak
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-2"
@@ -326,33 +388,46 @@
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-2"
-             class="md:hidden dark:bg-urban-950/95 bg-white/95 navbar-blur dark:border-t dark:border-urban-800/50 border-t border-urban-200/60 px-4 py-4 space-y-1">
-            <a href="{{ route('home') }}"
-               @click="mobileMenuOpen = false"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium dark:text-urban-300 text-urban-600 dark:hover:bg-urban-800/60 hover:bg-urban-100 dark:hover:text-white hover:text-urban-900 transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                Beranda
-            </a>
-            <a href="{{ route('blog.index') }}"
-               @click="mobileMenuOpen = false"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium dark:text-urban-300 text-urban-600 dark:hover:bg-urban-800/60 hover:bg-urban-100 dark:hover:text-white hover:text-urban-900 transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m7-7l-7 7 7 7"/>
-                </svg>
-                Semua Artikel
-            </a>
-            @foreach(\App\Models\Category::all() as $cat)
-            <a href="{{ route('blog.category', $cat->slug) }}"
-               @click="mobileMenuOpen = false"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium dark:text-urban-300 text-urban-600 dark:hover:bg-forest-900/60 hover:bg-forest-50 dark:hover:text-forest-300 hover:text-forest-700 transition-all">
-                <svg class="w-4 h-4 text-forest-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l-1.5 4H6l3.5 2.5-1.5 4L12 10l4 2.5-1.5-4L18 6h-4.5L12 2z"/>
-                </svg>
-                {{ $cat->name }}
-            </a>
-            @endforeach
+             class="md:hidden dark:bg-urban-950/95 bg-white/95 navbar-blur dark:border-t dark:border-urban-800/60 border-t border-urban-200/80 px-4 py-4 space-y-3 max-h-[80vh] overflow-y-auto shadow-2xl">
+            <div class="grid grid-cols-2 gap-2">
+                <a href="{{ route('home') }}"
+                   @click="mobileMenuOpen = false"
+                   class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('home') ? 'bg-forest-500/15 text-forest-600 dark:text-forest-400 font-semibold border border-forest-500/25' : 'dark:text-urban-300 text-urban-700 dark:bg-urban-900/60 bg-urban-100/70' }}">
+                    <svg class="w-4 h-4 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    Beranda
+                </a>
+                <a href="{{ route('blog.index') }}"
+                   @click="mobileMenuOpen = false"
+                   class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('blog.index') ? 'bg-forest-500/15 text-forest-600 dark:text-forest-400 font-semibold border border-forest-500/25' : 'dark:text-urban-300 text-urban-700 dark:bg-urban-900/60 bg-urban-100/70' }}">
+                    <svg class="w-4 h-4 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m7-7l-7 7 7 7"/>
+                    </svg>
+                    Semua Artikel
+                </a>
+            </div>
+
+            <div class="border-t border-urban-200/60 dark:border-urban-800/60 pt-3">
+                <span class="block text-[11px] font-semibold tracking-wider text-urban-400 dark:text-urban-500 uppercase mb-2 px-1">
+                    Kategori Berita
+                </span>
+                <div class="grid grid-cols-2 gap-2">
+                    @foreach($navAllCategories as $cat)
+                    @php $isMobileCatActive = request()->is('blog/kategori/' . $cat->slug); @endphp
+                    <a href="{{ route('blog.category', $cat->slug) }}"
+                       @click="mobileMenuOpen = false"
+                       class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all {{ $isMobileCatActive ? 'bg-forest-500/20 text-forest-600 dark:text-forest-400 font-semibold border border-forest-500/30' : 'dark:text-urban-300 text-urban-700 dark:bg-urban-900/40 bg-urban-100/50 hover:bg-forest-50 dark:hover:bg-forest-900/40' }}">
+                        <span class="truncate">{{ $cat->name }}</span>
+                        @if($cat->posts_count > 0)
+                        <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-urban-200/60 dark:bg-urban-800 text-urban-600 dark:text-urban-400 font-mono">
+                            {{ $cat->posts_count }}
+                        </span>
+                        @endif
+                    </a>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </header>
 
@@ -542,6 +617,7 @@
         function navApp() {
             return {
                 mobileMenuOpen: false,
+                catDropdownOpen: false,
                 scrolled: false,
                 darkMode: document.documentElement.classList.contains('dark'),
 
