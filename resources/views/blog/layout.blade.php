@@ -470,25 +470,25 @@
                             <rect x="21" y="7" width="6" height="21" rx="1" fill="currentColor" opacity="0.5"/>
                             <path d="M1 28 C6 20 9 24 12 16 C15 8 18 12 20 20 C22 28 26 22 31 28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.9"/>
                         </svg>
-                        <span class="font-display font-bold dark:text-urban-200 text-urban-700">{{ config('app.name') }}</span>
+                        <span class="font-display font-bold text-lg dark:text-white text-urban-950">{{ config('app.name') }}</span>
                     </a>
-                    <p class="text-sm dark:text-urban-500 text-urban-500 leading-relaxed">
+                    <p class="text-sm dark:text-urban-400 text-urban-600 leading-relaxed">
                         Portal berita dan informasi terpercaya. Temukan artikel pilihan seputar gaya hidup, teknologi, dan kabar terkini.
                     </p>
                 </div>
 
                 {{-- Kategori --}}
                 <div>
-                    <h3 class="font-semibold dark:text-urban-300 text-urban-700 mb-4 text-sm uppercase tracking-wider">Kategori</h3>
-                    <ul class="space-y-2">
+                    <h3 class="font-bold dark:text-urban-200 text-urban-900 mb-4 text-xs uppercase tracking-wider">Kategori</h3>
+                    <ul class="space-y-2.5">
                         <li>
-                            <a href="{{ route('blog.index') }}" class="text-sm dark:text-urban-500 text-urban-500 dark:hover:text-forest-400 hover:text-forest-600 transition-colors">
+                            <a href="{{ route('blog.index') }}" class="text-sm dark:text-urban-400 text-urban-600 font-medium dark:hover:text-forest-400 hover:text-forest-600 transition-colors">
                                 Semua Artikel
                             </a>
                         </li>
                         @foreach(\App\Models\Category::all() as $cat)
                         <li>
-                            <a href="{{ route('blog.category', $cat->slug) }}" class="text-sm dark:text-urban-500 text-urban-500 dark:hover:text-forest-400 hover:text-forest-600 transition-colors">
+                            <a href="{{ route('blog.category', $cat->slug) }}" class="text-sm dark:text-urban-400 text-urban-600 font-medium dark:hover:text-forest-400 hover:text-forest-600 transition-colors">
                                 {{ $cat->name }}
                             </a>
                         </li>
@@ -498,15 +498,15 @@
 
                 {{-- Info --}}
                 <div>
-                    <h3 class="font-semibold dark:text-urban-300 text-urban-700 mb-4 text-sm uppercase tracking-wider">Info</h3>
-                    <p class="text-sm dark:text-urban-500 text-urban-500 leading-relaxed">
+                    <h3 class="font-bold dark:text-urban-200 text-urban-900 mb-4 text-xs uppercase tracking-wider">Info</h3>
+                    <p class="text-sm dark:text-urban-400 text-urban-600 leading-relaxed">
                         Konten kami dipilih secara kurasi untuk memastikan kualitas dan relevansi terbaik bagi pembaca.
                     </p>
                 </div>
             </div>
 
             <div class="dark:border-t dark:border-urban-800/40 border-t border-urban-200/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-xs dark:text-urban-600 text-urban-500 text-center">
+                <p class="text-xs dark:text-urban-500 text-urban-600 text-center font-medium">
                     &copy; {{ date('Y') }} {{ config('app.name') }}. Seluruh hak cipta dilindungi.
                 </p>
                 <button x-data="{ darkMode: document.documentElement.classList.contains('dark') }"

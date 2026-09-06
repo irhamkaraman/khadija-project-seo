@@ -34,16 +34,16 @@
 {{-- ===== HERO SECTION ===== --}}
 <section class="px-4 sm:px-6 lg:px-8 pb-12 pt-8">
     <div class="max-w-6xl mx-auto text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-forest-900/60 border border-forest-700/40 text-forest-400 text-xs font-medium tracking-wider uppercase mb-6">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-forest-950/60 bg-forest-100/90 dark:border-forest-700/40 border-forest-300/80 dark:text-forest-400 text-forest-800 text-xs font-semibold tracking-wider uppercase mb-6 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-forest-600 dark:text-forest-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M17.293 3.707a1 1 0 00-1.414 0L10 9.586 4.121 3.707a1 1 0 00-1.414 1.414L8.586 11H3a1 1 0 100 2h5.586l-4.293 4.293a1 1 0 101.414 1.414L10 14.414l4.293 4.293a1 1 0 001.414-1.414L11.414 13H17a1 1 0 100-2h-5.586l5.293-5.293a1 1 0 000-1.414z" clip-rule="evenodd"/>
             </svg>
             Portal Informasi
         </div>
-        <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-5">
-            Artikel <span class="text-transparent bg-clip-text bg-gradient-to-r from-forest-400 to-forest-300">Terkini</span>
+        <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-black dark:text-white text-urban-950 leading-tight mb-5">
+            Artikel <span class="text-transparent bg-clip-text bg-gradient-to-r from-forest-500 to-forest-400 dark:from-forest-400 dark:to-forest-300">Terkini</span>
         </h1>
-        <p class="text-urban-400 text-lg max-w-xl mx-auto">
+        <p class="dark:text-urban-400 text-urban-600 text-lg max-w-xl mx-auto">
             Temukan berita dan informasi terpercaya dari seluruh penjuru kota dan alam.
         </p>
     </div>
@@ -58,7 +58,7 @@
             {{-- Featured Post (Pertama) --}}
             @php $featured = $posts->first(); @endphp
             <a href="{{ route('blog.show', $featured->slug) }}"
-               class="post-card group relative block rounded-2xl overflow-hidden mb-8 border border-urban-800/40 hover:border-forest-700/50 shadow-xl shadow-black/40"
+               class="post-card group relative block rounded-2xl overflow-hidden mb-8 border dark:border-urban-800/40 border-urban-200/80 shadow-xl dark:shadow-black/40 shadow-urban-200/60"
                style="min-height: 420px; position: relative;">
                 @if($featured->image_url)
                     <img src="{{ url('/file/' . $featured->image_url) }}" alt="{{ $featured->title }}"
@@ -110,7 +110,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 @foreach($posts->skip(1) as $post)
                 <a href="{{ route('blog.show', $post->slug) }}"
-                   class="post-card group flex flex-col rounded-2xl overflow-hidden border border-urban-800/40 hover:border-forest-700/50 bg-urban-900/50 shadow-lg shadow-black/30">
+                   class="post-card group flex flex-col rounded-2xl overflow-hidden dark:bg-urban-900/60 bg-white/90 dark:border dark:border-urban-800/40 border border-urban-200/80 shadow-md hover:shadow-xl dark:shadow-black/30 backdrop-blur-sm transition-all">
 
                     <div class="relative h-48 overflow-hidden flex-shrink-0">
                         @if($post->image_url)
@@ -118,31 +118,31 @@
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         @else
                             <div class="w-full h-full bg-gradient-to-br from-urban-800 to-urban-900 flex items-center justify-center">
-                                <svg class="w-12 h-12 text-urban-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-12 h-12 dark:text-urban-600 text-urban-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                             </div>
                         @endif
-                        <div class="absolute inset-0 bg-gradient-to-t from-urban-900/80 to-transparent"></div>
-                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-forest-800/90 text-forest-300 text-xs font-semibold uppercase tracking-wide">
+                        <div class="absolute inset-0 bg-gradient-to-t dark:from-urban-900/80 from-black/30 to-transparent"></div>
+                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full dark:bg-forest-950/80 bg-white/95 dark:text-forest-300 text-forest-800 text-xs font-semibold uppercase tracking-wide shadow-md backdrop-blur-sm border dark:border-forest-800/40 border-forest-200/60">
                             {{ $post->category->name ?? 'Umum' }}
                         </span>
                     </div>
 
                     <div class="flex flex-col flex-1 p-5">
-                        <div class="flex items-center gap-1.5 text-xs text-urban-500 mb-3">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center gap-1.5 text-xs dark:text-urban-400 text-urban-600 mb-3 font-medium">
+                            <svg class="w-3.5 h-3.5 dark:text-urban-500 text-urban-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                             {{ $post->created_at->translatedFormat('d M Y') }}
                         </div>
-                        <h3 class="font-display font-bold text-base text-white mb-2 leading-snug group-hover:text-forest-200 transition-colors line-clamp-2">
+                        <h3 class="font-display font-bold text-base dark:text-white text-urban-950 mb-2 leading-snug group-hover:text-forest-600 dark:group-hover:text-forest-200 transition-colors line-clamp-2 flex-1">
                             {{ $post->title }}
                         </h3>
-                        <p class="text-urban-400 text-sm line-clamp-2 flex-1 leading-relaxed">
+                        <p class="text-sm dark:text-urban-400 text-urban-700 line-clamp-2 leading-relaxed mb-4">
                             {{ Str::limit(strip_tags($post->content), 100) }}
                         </p>
-                        <div class="mt-4 pt-4 border-t border-urban-800/60 flex items-center gap-1.5 text-xs font-semibold text-forest-500 group-hover:text-forest-400 transition-colors">
+                        <div class="pt-4 dark:border-t dark:border-urban-800/60 border-t border-urban-100 flex items-center gap-1.5 text-xs font-semibold dark:text-forest-400 text-forest-600 group-hover:text-forest-700 dark:group-hover:text-forest-300 transition-colors">
                             Baca Selengkapnya
                             <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>

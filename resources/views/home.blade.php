@@ -46,8 +46,8 @@
         {{-- Section header --}}
         <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
-                <div class="w-1 h-8 bg-gradient-to-b from-forest-400 to-forest-600 rounded-full"></div>
-                <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-900">
+                <div class="w-1.5 h-8 bg-gradient-to-b from-forest-400 to-forest-600 rounded-full"></div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-950">
                     Artikel Unggulan
                 </h2>
             </div>
@@ -124,7 +124,7 @@
             <div class="lg:col-span-2 flex flex-col gap-6">
                 @foreach($latestPosts->skip(1)->take(2) as $post)
                 <a href="{{ route('blog.show', $post->slug) }}"
-                   class="post-card group flex flex-col sm:flex-row lg:flex-col rounded-2xl overflow-hidden dark:bg-urban-900/60 bg-white/70 dark:border dark:border-urban-800/40 border border-urban-200/60 backdrop-blur-sm shadow-lg flex-1">
+                   class="post-card group flex flex-col sm:flex-row lg:flex-col rounded-2xl overflow-hidden dark:bg-urban-900/60 bg-white/90 dark:border dark:border-urban-800/40 border border-urban-200/80 backdrop-blur-sm shadow-md hover:shadow-xl flex-1 transition-all">
 
                     <div class="relative sm:w-40 lg:w-full h-44 sm:h-auto lg:h-44 flex-shrink-0 overflow-hidden">
                         @if($post->image_url)
@@ -137,22 +137,22 @@
                                 </svg>
                             </div>
                         @endif
-                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-forest-800/90 text-forest-300 text-xs font-semibold uppercase tracking-wide">
+                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full dark:bg-forest-950/80 bg-white/95 dark:text-forest-300 text-forest-800 text-xs font-semibold uppercase tracking-wide shadow-md backdrop-blur-sm border dark:border-forest-800/40 border-forest-200/60">
                             {{ $post->category->name ?? 'Umum' }}
                         </span>
                     </div>
 
                     <div class="flex flex-col flex-1 p-5">
-                        <div class="flex items-center gap-1.5 text-xs dark:text-urban-500 text-urban-500 mb-2">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center gap-1.5 text-xs dark:text-urban-400 text-urban-600 mb-2 font-medium">
+                            <svg class="w-3.5 h-3.5 dark:text-urban-500 text-urban-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                             {{ $post->created_at->translatedFormat('d M Y') }}
                         </div>
-                        <h3 class="font-display font-bold text-base dark:text-white text-urban-900 mb-2 leading-snug group-hover:text-forest-600 dark:group-hover:text-forest-200 transition-colors line-clamp-3 flex-1">
+                        <h3 class="font-display font-bold text-base dark:text-white text-urban-950 mb-2 leading-snug group-hover:text-forest-600 dark:group-hover:text-forest-200 transition-colors line-clamp-3 flex-1">
                             {{ $post->title }}
                         </h3>
-                        <div class="flex items-center gap-1.5 text-xs font-semibold dark:text-forest-500 text-forest-600 group-hover:text-forest-400 transition-colors mt-3">
+                        <div class="flex items-center gap-1.5 text-xs font-semibold dark:text-forest-400 text-forest-600 group-hover:text-forest-700 dark:group-hover:text-forest-300 transition-colors mt-3">
                             Baca
                             <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
@@ -168,9 +168,9 @@
         {{-- Mobile "lihat semua" --}}
         <div class="mt-6 flex justify-center sm:hidden">
             <a href="{{ route('blog.index') }}"
-               class="inline-flex items-center gap-2 px-6 py-3 dark:bg-urban-800/60 bg-urban-100 dark:text-urban-200 text-urban-700 font-semibold rounded-xl text-sm transition-all dark:hover:bg-urban-700/60 hover:bg-urban-200">
+               class="inline-flex items-center gap-2 px-6 py-3 dark:bg-urban-800/60 bg-white border dark:border-urban-700/40 border-urban-200 shadow-sm dark:text-urban-200 text-urban-800 font-semibold rounded-xl text-sm transition-all dark:hover:bg-urban-700/60 hover:bg-urban-50">
                 Lihat Semua Artikel
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                 </svg>
             </a>
@@ -191,8 +191,8 @@
 
         <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
-                <div class="w-1 h-8 bg-gradient-to-b from-urban-400 to-urban-600 rounded-full"></div>
-                <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-900">
+                <div class="w-1.5 h-8 bg-gradient-to-b from-urban-400 to-urban-600 rounded-full"></div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-950">
                     Artikel Terbaru
                 </h2>
             </div>
@@ -208,7 +208,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             @foreach($morePosts as $post)
             <a href="{{ route('blog.show', $post->slug) }}"
-               class="post-card group flex flex-col rounded-2xl overflow-hidden dark:bg-urban-900/60 bg-white/80 dark:border dark:border-urban-800/40 border border-urban-200/60 shadow-md dark:shadow-black/30 backdrop-blur-sm">
+               class="post-card group flex flex-col rounded-2xl overflow-hidden dark:bg-urban-900/60 bg-white/90 dark:border dark:border-urban-800/40 border border-urban-200/80 shadow-md hover:shadow-xl dark:shadow-black/30 backdrop-blur-sm transition-all">
 
                 <div class="relative h-48 overflow-hidden flex-shrink-0">
                     @if($post->image_url)
@@ -221,26 +221,26 @@
                             </svg>
                         </div>
                     @endif
-                    <div class="absolute inset-0 bg-gradient-to-t from-urban-900/80 to-transparent"></div>
-                    <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-forest-800/90 text-forest-300 text-xs font-semibold uppercase tracking-wide">
+                    <div class="absolute inset-0 bg-gradient-to-t dark:from-urban-900/80 from-black/30 to-transparent"></div>
+                    <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full dark:bg-forest-950/80 bg-white/95 dark:text-forest-300 text-forest-800 text-xs font-semibold uppercase tracking-wide shadow-md backdrop-blur-sm border dark:border-forest-800/40 border-forest-200/60">
                         {{ $post->category->name ?? 'Umum' }}
                     </span>
                 </div>
 
                 <div class="flex flex-col flex-1 p-5">
-                    <div class="flex items-center gap-1.5 text-xs dark:text-urban-500 text-urban-500 mb-3">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center gap-1.5 text-xs dark:text-urban-400 text-urban-600 mb-3 font-medium">
+                        <svg class="w-3.5 h-3.5 dark:text-urban-500 text-urban-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         {{ $post->created_at->translatedFormat('d M Y') }}
                     </div>
-                    <h3 class="font-display font-bold text-base dark:text-white text-urban-900 mb-2 leading-snug group-hover:text-forest-600 dark:group-hover:text-forest-200 transition-colors line-clamp-2 flex-1">
+                    <h3 class="font-display font-bold text-base dark:text-white text-urban-950 mb-2 leading-snug group-hover:text-forest-600 dark:group-hover:text-forest-200 transition-colors line-clamp-2 flex-1">
                         {{ $post->title }}
                     </h3>
-                    <p class="text-sm dark:text-urban-400 text-urban-500 line-clamp-2 leading-relaxed mb-4">
+                    <p class="text-sm dark:text-urban-400 text-urban-700 line-clamp-2 leading-relaxed mb-4">
                         {{ Str::limit(strip_tags($post->content), 100) }}
                     </p>
-                    <div class="pt-4 dark:border-t dark:border-urban-800/60 border-t border-urban-100 flex items-center gap-1.5 text-xs font-semibold dark:text-forest-500 text-forest-600 group-hover:text-forest-400 transition-colors">
+                    <div class="pt-4 dark:border-t dark:border-urban-800/60 border-t border-urban-100 flex items-center gap-1.5 text-xs font-semibold dark:text-forest-400 text-forest-600 group-hover:text-forest-700 dark:group-hover:text-forest-300 transition-colors">
                         Baca Selengkapnya
                         <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
@@ -253,8 +253,8 @@
 
         <div class="mt-10 flex justify-center">
             <a href="{{ route('blog.index') }}"
-               class="inline-flex items-center gap-3 px-8 py-4 dark:bg-urban-800/60 bg-white dark:hover:bg-urban-700/60 hover:bg-urban-50 dark:text-urban-200 text-urban-700 font-semibold rounded-2xl text-sm transition-all dark:border dark:border-urban-700/40 border border-urban-200 shadow-md">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               class="inline-flex items-center gap-3 px-8 py-4 dark:bg-urban-800/60 bg-white dark:hover:bg-urban-700/60 hover:bg-forest-50 dark:text-urban-200 text-urban-800 font-bold rounded-2xl text-sm transition-all dark:border dark:border-urban-700/40 border border-urban-200 shadow-md hover:border-forest-300 hover:text-forest-700">
+                <svg class="w-5 h-5 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                 </svg>
                 Muat Lebih Banyak Artikel
@@ -276,43 +276,32 @@
     <div class="max-w-6xl mx-auto">
 
         <div class="flex items-center gap-3 mb-8">
-            <div class="w-1 h-8 bg-gradient-to-b from-forest-300 to-forest-600 rounded-full"></div>
-            <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-900">
+            <div class="w-1.5 h-8 bg-gradient-to-b from-forest-400 to-forest-600 rounded-full"></div>
+            <h2 class="font-display text-2xl sm:text-3xl font-bold dark:text-white text-urban-950">
                 Jelajahi Kategori
             </h2>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-{{ min($categories->count(), 5) }} gap-4">
             @foreach($categories->take(5) as $cat)
-            @php
-                $colors = [
-                    ['from-forest-600', 'to-forest-800', 'text-forest-100'],
-                    ['from-urban-600', 'to-urban-800', 'text-urban-100'],
-                    ['from-forest-700', 'to-urban-800', 'text-forest-100'],
-                    ['from-urban-700', 'to-forest-800', 'text-urban-100'],
-                ];
-                $color = $colors[$loop->index % count($colors)];
-            @endphp
             <a href="{{ route('blog.category', $cat->slug) }}"
-               class="cat-card group relative overflow-hidden rounded-2xl bg-gradient-to-br from-{{ $color[0] }} via-{{ $color[1] }} to-{{ $color[2] }} p-6 text-{{ $color[2] }} shadow-lg shadow-black/20">
+               class="cat-card group relative overflow-hidden rounded-2xl p-5 sm:p-6 transition-all duration-300 dark:bg-urban-900/60 bg-white/90 dark:border dark:border-urban-800/60 border border-urban-200/80 shadow-md hover:shadow-xl dark:hover:border-forest-700/50 hover:border-forest-300 backdrop-blur-sm">
 
-                {{-- Shimmer effect --}}
-                <div class="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5 group-hover:from-white/5 group-hover:to-white/10 transition-all duration-300"></div>
-
-                {{-- Decorative circle --}}
-                <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/5 rounded-full"></div>
-                <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-black/10 rounded-full"></div>
+                {{-- Shimmer effect on hover --}}
+                <div class="absolute inset-0 bg-gradient-to-br from-forest-500/0 via-forest-500/5 to-forest-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 <div class="relative">
-                    <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 rounded-xl dark:bg-forest-950/80 bg-forest-100/90 dark:border dark:border-forest-700/40 border border-forest-200 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5 dark:text-forest-400 text-forest-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                         </svg>
                     </div>
-                    <h3 class="font-display font-bold text-lg text-white mb-1">{{ $cat->name }}</h3>
-                    <p class="text-xs text-white/60 flex items-center gap-1">
+                    <h3 class="font-display font-bold text-base sm:text-lg dark:text-white text-urban-950 mb-1 group-hover:text-forest-600 dark:group-hover:text-forest-300 transition-colors">
+                        {{ $cat->name }}
+                    </h3>
+                    <p class="text-xs dark:text-urban-400 text-urban-600 flex items-center gap-1 font-medium">
                         {{ $cat->posts_count ?? $cat->posts()->count() }} artikel
-                        <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5 text-forest-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </p>
