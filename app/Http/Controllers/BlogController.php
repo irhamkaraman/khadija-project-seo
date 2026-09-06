@@ -17,9 +17,9 @@ class BlogController extends Controller
         $totalPosts   = Post::count();
 
         $affiliates   = AffiliateLink::active()->inRandomOrder()->limit(12)->get();
-        $popupAffiliate = $affiliates->isNotEmpty() ? $affiliates->first() : null;
+        $floatingAds  = AffiliateLink::active()->inRandomOrder()->limit(2)->get();
 
-        return view('home', compact('latestPosts', 'morePosts', 'categories', 'totalPosts', 'affiliates', 'popupAffiliate'));
+        return view('home', compact('latestPosts', 'morePosts', 'categories', 'totalPosts', 'affiliates', 'floatingAds'));
     }
 
     public function index()
